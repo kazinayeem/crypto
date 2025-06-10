@@ -1,11 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import  { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 interface CryptoChartProps {
   currentPrice?: number;
+  theme?: "dark" | "light"; // Add theme prop
 }
 
-export function CryptoChart({  }: CryptoChartProps) {
+export function CryptoChart({ theme = "dark" }: CryptoChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const widgetContainerId = "tradingview_mini_chart_container";
 
@@ -30,7 +31,7 @@ export function CryptoChart({  }: CryptoChartProps) {
       height: "100%",
       locale: "en",
       dateRange: "12M",
-      colorTheme: "dark",
+      colorTheme: theme, // <-- use theme prop here
       trendLineColor: "#f6e05e",
       underLineColor: "rgba(246, 224, 94, 0.2)",
       underLineBottomColor: "rgba(246, 224, 94, 0)",
@@ -54,7 +55,7 @@ export function CryptoChart({  }: CryptoChartProps) {
         script.parentNode.removeChild(script);
       }
     };
-  }, []);
+  }, [theme]); // re-run effect when theme changes
 
   return (
     <Card className="bg-gray-900 text-gray-200 border-none shadow-lg rounded-lg">
