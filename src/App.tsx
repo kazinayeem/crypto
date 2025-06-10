@@ -42,7 +42,7 @@ function App() {
               <PriceOverviewChart  />
             </div>
             <div className="col-span-6 grid grid-rows-2 gap-4 h-full">
-              <CryptoChart currentPrice={23332} />
+              <CryptoChart  />
               <FearGreedIndex />
             </div>
             <div className="col-span-3 h-full">

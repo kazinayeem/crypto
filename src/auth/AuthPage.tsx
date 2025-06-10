@@ -1,4 +1,3 @@
-import React from "react";
 
 export function AuthPage() {
   const backgroundGradientStyle = {
@@ -11,8 +10,7 @@ export function AuthPage() {
   };
 
   const synthesizeAITextColorClass = "text-gray-300";
-  const mainTitleNormalTextColorClass = "text-white";
-  const mainTitleHighlightColorClass = "text-yellow-400";
+
   const grayButtonBgClass = "bg-gray-700";
   const grayButtonTextColorClass = "text-gray-200";
   const grayButtonHoverBgClass = "hover:bg-gray-600";
