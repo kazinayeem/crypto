@@ -150,7 +150,7 @@ export default function FullScreenChat() {
   ];
 
   return (
-    <div className="h-screen w-full bg-background p-4">
+    <div className="h-[90vh] w-full bg-background p-4">
       <Card className="h-full w-full bg-background text-foreground border-none shadow-lg rounded-lg flex flex-col">
         <CardHeader className="pb-2">
           <CardTitle className="text-xl font-semibold">Your Agent</CardTitle>

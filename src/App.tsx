@@ -39,11 +39,11 @@ function App() {
                 todayChange={-2.5}
                 last7DaysChange={4.25}
               />
-              <PriceOverviewChart />
+              <PriceOverviewChart  />
             </div>
             <div className="col-span-6 grid grid-rows-2 gap-4 h-full">
-              <CryptoChart currentPrice={80291} />
-              <FearGreedIndex value={70} />
+              <CryptoChart currentPrice={23332} />
+              <FearGreedIndex />
             </div>
             <div className="col-span-3 h-full">
               <FullScreenChat />
