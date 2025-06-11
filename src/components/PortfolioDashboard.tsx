@@ -1,125 +1,148 @@
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Wallet,
-  DollarSign,
-  ArrowUpRightFromSquare,
-  Database,
-  MoreVertical,
-} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { fakeWallets, type WalletData } from "./fakeData";
+import { TotalBalanceSection } from "./TotalBalanceSection";
+import { WalletItem } from "./WalletItem";
+import { WalletDetailSection } from "./WalletDetailSection";
 
-interface TotalBalanceSectionProps {
-  totalBalance: number;
-  todayChange: number;
-  last7DaysChange: number;
-}
+export function PortfolioDashboard() {
+  const [activeView, setActiveView] = useState<"list" | "detail">("list");
+  const [selectedWallet, setSelectedWallet] = useState<WalletData | null>(null);
 
-const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
-  totalBalance,
-  todayChange,
-  last7DaysChange,
-}) => {
-  const todayChangeColor =
-    todayChange >= 0
-      ? "text-green-600 dark:text-green-400"
-      : "text-red-600 dark:text-red-400";
-
-  const last7DaysChangeColor =
-    last7DaysChange >= 0
-      ? "text-green-600 dark:text-green-400"
-      : "text-red-600 dark:text-red-400";
-
-  return (
-    <div className="pb-4 border-b border-gray-300 dark:border-gray-700">
-      <CardHeader className="p-0 mb-2">
-        <CardTitle className="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-          TOTAL BALANCE
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <p className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-          ${totalBalance.toLocaleString()}
-        </p>
-        <div className="flex items-center space-x-4 text-sm">
-          <div className="flex items-center">
-            <span className="mr-1 text-gray-700 dark:text-gray-300">Today</span>
-            <span className={`${todayChangeColor} flex items-center`}>
-              {todayChange >= 0 ? "+" : ""}
-              {todayChange}%
-              {todayChange >= 0 ? (
-                <span className="ml-1 text-xs">▲</span>
-              ) : (
-                <span className="ml-1 text-xs">▼</span>
-              )}
-            </span>
-          </div>
-          <div className="flex items-center">
-            <span className="mr-1 text-gray-700 dark:text-gray-300">last 7 days</span>
-            <span className={`${last7DaysChangeColor} flex items-center`}>
-              {last7DaysChange >= 0 ? "+" : ""}
-              {last7DaysChange}%
-              {last7DaysChange >= 0 ? (
-                <span className="ml-1 text-xs">▲</span>
-              ) : (
-                <span className="ml-1 text-xs">▼</span>
-              )}
-            </span>
-          </div>
-        </div>
-      </CardContent>
-    </div>
+  const totalBalance = fakeWallets.reduce(
+    (acc, wallet) => acc + wallet.balance,
+    0
   );
-};
+  const todayChange = -2.5;
+  const last7DaysChange = 4.25;
 
-interface WalletItemProps {
-  icon: React.ReactNode;
-  name: string;
-  isActive?: boolean;
-}
+  const handleWalletClick = (wallet: WalletData) => {
+    setSelectedWallet(wallet);
+    setActiveView("detail");
+  };
 
-const WalletItem: React.FC<WalletItemProps> = ({ icon, name, isActive }) => (
-  <li
-    className={`flex items-center justify-between space-x-3 p-3 rounded-lg cursor-pointer transition-colors ${
-      isActive
-        ? "bg-yellow-100 text-yellow-800 dark:bg-gray-700 dark:text-yellow-400"
-        : "hover:bg-gray-100 text-gray-700 dark:hover:bg-gray-800 dark:text-gray-300"
-    }`}
-  >
-    <div className="flex items-center space-x-3">
-      {icon}
-      <span>{name}</span>
-    </div>
-    <MoreVertical size={16} className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300" />
-  </li>
-);
+  const handleCloseDetail = () => {
+    setActiveView("list");
+    setSelectedWallet(null);
+  };
 
-export function PortfolioDashboard({
-  totalBalance,
-  todayChange,
-  last7DaysChange,
-}: TotalBalanceSectionProps) {
+  const variants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 300 : -300,
+      opacity: 0,
+      position: "absolute",
+      width: "100%",
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      position: "relative",
+      width: "100%",
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? 300 : -300,
+      opacity: 0,
+      position: "absolute",
+      width: "100%",
+    }),
+  };
+
+  const direction = activeView === "detail" ? 1 : -1;
+
   return (
-    <Card className="w-full h-[530px] bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-200 border border-gray-200 dark:border-none shadow-lg rounded-lg p-4 flex flex-col transition-colors">
-      <TotalBalanceSection
-        totalBalance={totalBalance}
-        todayChange={todayChange}
-        last7DaysChange={last7DaysChange}
-      />
-      <nav className="flex-grow overflow-y-auto custom-scrollbar">
-        <ul>
-          <WalletItem icon={<Wallet size={20} />} name="Bee Wallet" isActive />
-          <WalletItem icon={<DollarSign size={20} />} name="Binance" />
-          <WalletItem icon={<ArrowUpRightFromSquare size={20} />} name="Bybit" />
-          <WalletItem icon={<Database size={20} />} name="Coinbase" />
-        </ul>
-        <Button
-          variant="outline"
-          className="mt-6 w-full border-yellow-500 text-yellow-600 dark:text-yellow-400 dark:border-yellow-400 hover:bg-yellow-500 hover:text-white dark:hover:bg-yellow-400 dark:hover:text-gray-900"
-        >
-          + Connect Wallet
-        </Button>
-      </nav>
-    </Card>
+    <div
+      className="flex items-center justify-center p-4 font-sans"
+      style={{
+        background: `linear-gradient(to bottom, #191919 0%, #191919 75%, #292a55 75%, #292a55 100%)`,
+      }}
+    >
+      <Card className="w-full max-w-md h-[600px] text-gray-100 border border-[#333] shadow-lg rounded-lg p-4 flex flex-col relative overflow-hidden bg-[#191919]">
+        <AnimatePresence initial={false} custom={direction}>
+          {activeView === "list" && (
+            <motion.div
+              key="list"
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex flex-col h-full"
+            >
+              <TotalBalanceSection
+                totalBalance={totalBalance}
+                todayChange={todayChange}
+                last7DaysChange={last7DaysChange}
+              />
+              <nav className="flex-grow overflow-y-auto custom-scrollbar pt-4">
+                <ul>
+                  {fakeWallets.map((wallet) => (
+                    <WalletItem
+                      key={wallet.id}
+                      icon={wallet.icon}
+                      name={wallet.name}
+                      isActive={
+                        selectedWallet?.id === wallet.id &&
+                        activeView === "detail"
+                      }
+                      onClick={() => handleWalletClick(wallet)}
+                    />
+                  ))}
+                </ul>
+                <Button
+                  variant="outline"
+                  className="mt-6 w-full border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700] hover:text-[#191919]"
+                >
+                  + Connect Wallet
+                </Button>
+              </nav>
+            </motion.div>
+          )}
+
+          {activeView === "detail" && selectedWallet && (
+            <motion.div
+              key="detail"
+              custom={direction}
+              variants={variants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex flex-col h-full"
+            >
+              <WalletDetailSection
+                wallet={selectedWallet}
+                onClose={handleCloseDetail}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <style>{`
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: #292a55;
+            border-radius: 10px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 10px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #777;
+          }
+          @media (max-width: 640px) {
+            .max-w-md {
+              max-width: 100%;
+              height: auto;
+            }
+          }
+        `}</style>
+      </Card>
+    </div>
   );
 }

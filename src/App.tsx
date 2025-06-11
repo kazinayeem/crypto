@@ -34,15 +34,11 @@ function App() {
         <div className="flex-grow p-4 pt-0">
           <div className="grid grid-cols-12 gap-4 h-full">
             <div className="col-span-3 grid grid-rows-2 gap-4 h-full">
-              <PortfolioDashboard
-                totalBalance={158565}
-                todayChange={-2.5}
-                last7DaysChange={4.25}
-              />
-              <PriceOverviewChart  />
+              <PortfolioDashboard />
+              <PriceOverviewChart />
             </div>
             <div className="col-span-6 grid grid-rows-2 gap-4 h-full">
-              <CryptoChart  />
+              <CryptoChart />
               <FearGreedIndex />
             </div>
             <div className="col-span-3 h-full">
