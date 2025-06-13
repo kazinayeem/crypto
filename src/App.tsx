@@ -3,13 +3,14 @@ import { Header } from "./components/Header";
 import { CryptoChart } from "./components/CryptoChart";
 import { PriceOverviewChart } from "./components/PriceOverviewChart";
 import { FearGreedIndex } from "./components/FearGreedIndex";
-import { BinanceBalanceScreen } from "./components/BinanceBalanceScreen";
 import { PortfolioDashboard } from "./components/PortfolioDashboard";
 import FullScreenChat from "./components/YourAgent";
 import { ThemeProvider } from "./components/theme-provider";
+import { MessageCircle } from "lucide-react"; // icon
 
 function App() {
   const [isMobile, setIsMobile] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -18,11 +19,39 @@ function App() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const toggleChat = () => setShowChat((prev) => !prev);
+
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-background text-foreground font-sans">
+      <div className="min-h-screen bg-background text-foreground font-sans relative">
         <Header />
-        <BinanceBalanceScreen />
+        <PortfolioDashboard />
+        <PriceOverviewChart />
+        <FearGreedIndex />
+
+        {/* Floating Chat Button */}
+        <button
+          onClick={toggleChat}
+          className="fixed bottom-4 right-4 z-50 p-3 bg-yellow-500 text-black rounded-full shadow-lg hover:bg-yellow-600 transition"
+          aria-label="Open Chat"
+        >
+          <MessageCircle size={24} />
+        </button>
+
+        {/* Chat Modal */}
+        {showChat && (
+          <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
+            <div className="relative w-full h-full p-4 bg-background">
+              <FullScreenChat />
+              <button
+                onClick={toggleChat}
+                className="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700 p-2 rounded"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

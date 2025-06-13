@@ -1,10 +1,13 @@
+// src/TotalBalanceSection.tsx
 import React from "react";
+import { motion } from "framer-motion";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface TotalBalanceSectionProps {
   totalBalance: number;
   todayChange: number;
   last7DaysChange: number;
+  isMobileView: boolean;
 }
 
 export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
@@ -12,36 +15,70 @@ export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
   todayChange,
   last7DaysChange,
 }) => {
-  const todayChangeColor = todayChange >= 0 ? "text-green-500" : "text-red-500";
-  const last7DaysChangeColor = last7DaysChange >= 0 ? "text-green-500" : "text-red-500";
+  // Color logic
+  const getColorClass = (value: number) =>
+    value >= 0 ? "text-green-500" : "text-red-500";
+
+  // Symbol logic
+  const getSymbol = (value: number) => (value >= 0 ? "▲" : "▼");
+
+  // Framer Motion animation
+  const changeVariants = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: -10 },
+  };
 
   return (
     <div className="pb-4 border-b border-[#333]">
       <CardHeader className="p-0 mb-2">
-        <CardTitle className="text-sm text-gray-400 uppercase tracking-wide">
+        <CardTitle className="text-sm text-[#e2e2e3] uppercase tracking-wide">
           Total Balance
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-0">
-        <p className="text-3xl md:text-4xl font-bold text-[#34A853] mb-2">
-          ${totalBalance.toLocaleString()}
+
+      <CardContent className="p-0 flex items-center justify-between">
+        <p
+          className="text-[42px] font-extrabold leading-[120%] tracking-tight"
+          style={{ color: "#1BCC7A", fontFamily: "Montserrat" }}
+        >
+          ${totalBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })}
         </p>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-2 sm:space-y-0 text-sm">
-          <div className="flex items-center">
-            <span className="mr-1 text-gray-400">Today</span>
-            <span className={`${todayChangeColor} flex items-center`}>
-              {todayChange >= 0 ? "+" : ""}
-              {todayChange}%
-              <span className="ml-1 text-xs">{todayChange >= 0 ? "▲" : "▼"}</span>
-            </span>
+
+        <div className="flex flex-col text-[#e2e2e3] text-sm min-w-[150px] text-right">
+          <div className="flex justify-between mb-1 font-medium">
+            <span>Today</span>
+            <span>Last 7 days</span>
           </div>
-          <div className="flex items-center">
-            <span className="mr-1 text-gray-400">Last 7 days</span>
-            <span className={`${last7DaysChangeColor} flex items-center`}>
-              {last7DaysChange >= 0 ? "+" : ""}
-              {last7DaysChange}%
-              <span className="ml-1 text-xs">{last7DaysChange >= 0 ? "▲" : "▼"}</span>
-            </span>
+
+          <div className="flex justify-between font-semibold">
+            <motion.span
+              key={todayChange}
+              className={`${getColorClass(todayChange)} flex items-center justify-end space-x-1`}
+              variants={changeVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.4 }}
+              aria-label={`Today change: ${todayChange}%`}
+            >
+              <span>{todayChange >= 0 ? "+" : ""}{todayChange}%</span>
+              <span className="text-xs">{getSymbol(todayChange)}</span>
+            </motion.span>
+
+            <motion.span
+              key={last7DaysChange}
+              className={`${getColorClass(last7DaysChange)} flex items-center justify-end space-x-1`}
+              variants={changeVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={{ duration: 0.4 }}
+              aria-label={`7-day change: ${last7DaysChange}%`}
+            >
+              <span>{last7DaysChange >= 0 ? "+" : ""}{last7DaysChange}%</span>
+              <span className="text-xs">{getSymbol(last7DaysChange)}</span>
+            </motion.span>
           </div>
         </div>
       </CardContent>

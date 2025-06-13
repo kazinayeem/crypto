@@ -1,4 +1,3 @@
-
 export function AuthPage() {
   const backgroundGradientStyle = {
     background: `linear-gradient(
@@ -18,56 +17,71 @@ export function AuthPage() {
 
   return (
     <div
-      className="relative min-h-screen flex flex-col items-center justify-start p-4 pt-10 overflow-hidden"
+      className="relative min-h-screen flex flex-col p-4 overflow-hidden"
       style={backgroundGradientStyle}
     >
+      {/* Background images */}
       <img
         src="/image1.png"
         alt="Decorative bee illustration"
-        className="absolute top-0 left-0 w-40 h-auto opacity-90 z-0
-                   md:w-56 lg:w-72 -translate-x-[20%] -translate-y-[20%] rotate-[-9deg]"
+        className="absolute top-0 left-0 w-64 h-auto opacity-90 z-0
+             md:w-80 lg:w-96 -translate-x-[0%] -translate-y-[10%]"
       />
+
       <img
         src="/image2.png"
         alt="Decorative bee illustration"
-        className="absolute bottom-0 right-0 w-40 h-auto opacity-90 z-0
-                   md:w-56 lg:w-72 translate-x-[20%] translate-y-[20%]"
+        className="absolute bottom-0 right-0 w-64 h-auto opacity-90 z-0
+             md:w-80 lg:w-96 translate-x-[20%] translate-y-[20%]"
       />
 
-      <div className="relative z-10 flex flex-col items-center text-center space-y-8 p-4 max-w-md w-full mx-auto">
-        <h1
-          className={`text-xl md:text-2xl font-bold tracking-wider ${synthesizeAITextColorClass} mt-2`}
-        >
-          SYNTHESIZEAI
-        </h1>
-
-        <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-center text-white">
-          <span className="block whitespace-nowrap">
-            Your <span className="text-yellow-400">AI Sidekick</span>
-          </span>
-          <span className="block whitespace-nowrap">
-            in the <span className="text-yellow-400">World of Crypto</span>
-          </span>
-        </h2>
-
-        <div className="flex flex-col space-y-4 w-full max-w-xs">
-          <button className="w-full bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-yellow-300 transition-colors duration-200">
-            Connect Wallet
-          </button>
-
-          <button
-            className={`w-full ${grayButtonBgClass} ${grayButtonTextColorClass} font-semibold py-3 px-6 rounded-lg shadow-md border ${grayButtonBorderClass} flex items-center justify-center space-x-2 ${grayButtonHoverBgClass} transition-colors duration-200`}
+      <div className="relative z-10 flex flex-col flex-1 max-w-md w-full mx-auto">
+        {/* Top: SYNTHESIZEAI */}
+        <div className="flex-1 flex items-start justify-center pt-10">
+          <h1
+            className={`text-xl md:text-2xl font-bold tracking-wider ${synthesizeAITextColorClass}`}
           >
-            <img src="/google-logo.svg" alt="Google Logo" className="w-5 h-5" />
-            <span>Login with Google</span>
-          </button>
+            SYNTHESIZEAI
+          </h1>
+        </div>
 
-          <button
-            className={`w-full ${grayButtonBgClass} ${grayButtonTextColorClass} font-semibold py-3 px-6 rounded-lg shadow-md border ${grayButtonBorderClass} flex items-center justify-center space-x-2 ${grayButtonHoverBgClass} transition-colors duration-200`}
-          >
-            <img src="/apple-logo.svg" alt="Apple Logo" className="w-5 h-5" />
-            <span>Login with Apple</span>
-          </button>
+        {/* Middle: Headline */}
+        <div className="flex-1 flex items-center justify-center text-center">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-white">
+            <span className="block whitespace-nowrap">
+              Your <span className="text-yellow-400">AI Sidekick</span>
+            </span>
+            <span className="block whitespace-nowrap">
+              in the <span className="text-yellow-400">World of Crypto</span>
+            </span>
+          </h2>
+        </div>
+
+        {/* Bottom: Buttons */}
+        <div className="flex-1 flex items-end justify-center pb-10">
+          <div className="flex flex-col space-y-4 w-full max-w-xs">
+            <button className="w-full bg-yellow-400 text-black font-bold py-3 px-6 rounded-lg shadow-lg hover:bg-yellow-300 transition-colors duration-200">
+              Connect Wallet
+            </button>
+
+            <button
+              className={`w-full ${grayButtonBgClass} ${grayButtonTextColorClass} font-semibold py-3 px-6 rounded-lg shadow-md border ${grayButtonBorderClass} flex items-center justify-center space-x-2 ${grayButtonHoverBgClass} transition-colors duration-200`}
+            >
+              <img
+                src="/google-logo.svg"
+                alt="Google Logo"
+                className="w-5 h-5"
+              />
+              <span>Login with Google</span>
+            </button>
+
+            <button
+              className={`w-full ${grayButtonBgClass} ${grayButtonTextColorClass} font-semibold py-3 px-6 rounded-lg shadow-md border ${grayButtonBorderClass} flex items-center justify-center space-x-2 ${grayButtonHoverBgClass} transition-colors duration-200`}
+            >
+              <img src="/apple-logo.svg" alt="Apple Logo" className="w-5 h-5" />
+              <span>Login with Apple</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
