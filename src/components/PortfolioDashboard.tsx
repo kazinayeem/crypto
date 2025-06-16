@@ -18,10 +18,6 @@ export function PortfolioDashboard() {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    console.log("wallets from redux:", wallets);
-  }, [wallets]);
-
-  useEffect(() => {
     const handleResize = () => setIsMobileView(window.innerWidth <= 640);
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -32,13 +28,8 @@ export function PortfolioDashboard() {
     dispatch(fetchBybitWalletData());
   }, [dispatch]);
 
-  // Sum all balances
   const totalBalance = wallets.reduce((acc, wallet) => acc + wallet.balance, 0);
-
-  // Get Bybit wallet
   const bybitWallet = wallets.find((wallet) => wallet.id === "bybit");
-
-  // Use todayChange and last7DaysChange from wallet directly
   const todayChange = bybitWallet?.todayChange ?? 0;
   const last7DaysChange = bybitWallet?.last7DaysChange ?? 0;
 
@@ -76,9 +67,9 @@ export function PortfolioDashboard() {
   const direction = activeView === "detail" ? 1 : -1;
 
   return (
-    <div className="flex items-center justify-center p-4 font-sans bg-black">
+    <div className="flex items-center justify-center w-full h-full font-sans">
       <Card
-        className="w-full max-w-md sm:max-w-xl h-[500px] text-gray-100 border border-[#333] shadow-lg rounded-lg p-4 flex flex-col relative overflow-hidden custom-scrollbar"
+        className="w-full h-full text-gray-100 border border-[#333] shadow-lg rounded-lg p-4 flex flex-col relative overflow-hidden custom-scrollbar"
         style={{
           background:
             "linear-gradient(to bottom, #191919 0%, #191919 80%, #27274b 100%)",
@@ -94,7 +85,7 @@ export function PortfolioDashboard() {
               variants={variants}
               exit="exit"
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="flex flex-col h-full"
+              className="flex flex-col h-full overflow-auto"
             >
               <TotalBalanceSection
                 totalBalance={totalBalance}
@@ -102,7 +93,7 @@ export function PortfolioDashboard() {
                 last7DaysChange={last7DaysChange}
                 isMobileView={isMobileView}
               />
-              <nav className="flex-grow pt-4 flex flex-col">
+              <nav className="flex-grow pt-4 overflow-auto">
                 <WalletList
                   wallets={wallets}
                   selectedWallet={selectedWallet}
@@ -122,7 +113,7 @@ export function PortfolioDashboard() {
               exit="exit"
               variants={variants}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="flex flex-col h-full"
+              className="flex flex-col h-full overflow-auto"
             >
               <WalletDetailSection
                 wallet={selectedWallet}
@@ -159,3 +150,4 @@ export function PortfolioDashboard() {
     </div>
   );
 }
+

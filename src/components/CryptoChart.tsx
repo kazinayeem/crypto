@@ -50,30 +50,35 @@ export function CryptoChart() {
   }, [symbol]);
 
   return (
-    <Card className="bg-gray-900 text-gray-200 border-none shadow-lg rounded-lg">
-      <CardHeader className="flex flex-col space-y-2 pt-4 px-4 pb-0">
-        <div className="flex items-center justify-between w-full">
-          <CardTitle className="text-xl font-semibold text-gray-200">
-            Chart Overview
-          </CardTitle>
+    <div className="container mx-auto px-4">
+      <Card className="bg-gray-900 text-gray-200 border-none shadow-lg rounded-2xl w-full max-w-4xl mx-auto">
+        <CardHeader className="flex flex-col space-y-2 pt-4 px-4 pb-0">
+          <div className="flex items-center justify-between w-full">
+            <CardTitle className="text-xl font-semibold text-gray-200">
+              Chart Overview
+            </CardTitle>
 
-          <select
-            value={symbol}
-            onChange={(e) => setSymbol(e.target.value)}
-            className="bg-gray-800 text-gray-200 rounded px-2 py-1 border border-gray-600"
-          >
-            {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      </CardHeader>
+            <select
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value)}
+              className="bg-gray-800 text-gray-200 rounded px-2 py-1 border border-gray-600"
+            >
+              {options.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </CardHeader>
 
-      <CardContent className="pt-0 px-0 pb-0 h-[400px]">
-        <div ref={containerRef} className="w-full h-full" />
-      </CardContent>
-    </Card>
+        <CardContent className="pt-0 px-0 pb-4">
+          <div
+            ref={containerRef}
+            className="w-full aspect-[4/3] sm:aspect-[5/3] lg:aspect-[16/7]"
+          />
+        </CardContent>
+      </Card>
+    </div>
   );
 }

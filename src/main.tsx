@@ -1,13 +1,14 @@
-// src/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router"; // Import for routing
+import { createBrowserRouter, RouterProvider } from "react-router";
 import { Provider } from "react-redux";
 import "./index.css";
 import { AuthPage } from "./auth/AuthPage";
 import App from "./App";
 import { store } from "./store";
-import "@fontsource/montserrat/800.css"; // or other weights like 400, 600 etc.
+import "@fontsource/montserrat/800.css";
+import DashBoard from "./DashBoard";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,15 @@ const router = createBrowserRouter([
     path: "/auth",
     element: <AuthPage />,
   },
+  {
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/dashboard",
+        element: <DashBoard />,
+      },
+    ],
+  },
 ]);
 
 const root = document.getElementById("root");
@@ -26,8 +36,6 @@ if (root) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <Provider store={store}>
-        {" "}
-        {/* Wrap RouterProvider with Redux Provider */}
         <RouterProvider router={router} />
       </Provider>
     </React.StrictMode>

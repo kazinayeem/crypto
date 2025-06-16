@@ -1,4 +1,20 @@
+import { loginWithApple, loginWithGoogle } from "@/features/user/userActions";
+import type { AppDispatch } from "@/store";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+
 export function AuthPage() {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const handleGoogleLogin = async () => {
+    try {
+      await dispatch(loginWithGoogle());
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
   const backgroundGradientStyle = {
     background: `linear-gradient(
       10deg,
@@ -65,6 +81,7 @@ export function AuthPage() {
             </button>
 
             <button
+              onClick={handleGoogleLogin}
               className={`w-full ${grayButtonBgClass} ${grayButtonTextColorClass} font-semibold py-3 px-6 rounded-lg shadow-md border ${grayButtonBorderClass} flex items-center justify-center space-x-2 ${grayButtonHoverBgClass} transition-colors duration-200`}
             >
               <img
@@ -76,6 +93,7 @@ export function AuthPage() {
             </button>
 
             <button
+            onClick={loginWithApple}
               className={`w-full ${grayButtonBgClass} ${grayButtonTextColorClass} font-semibold py-3 px-6 rounded-lg shadow-md border ${grayButtonBorderClass} flex items-center justify-center space-x-2 ${grayButtonHoverBgClass} transition-colors duration-200`}
             >
               <img src="/apple-logo.svg" alt="Apple Logo" className="w-5 h-5" />

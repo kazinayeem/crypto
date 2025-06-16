@@ -1,4 +1,3 @@
-
 import {
   Card,
   CardContent,
@@ -9,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Send, Image, Mic, Plus } from "lucide-react";
-import React from "react";
+import React, { useRef, useEffect } from "react";
 
 interface MessageProps {
   sender: "agent" | "user";
@@ -43,7 +42,7 @@ const ChatMessage: React.FC<MessageProps> = ({
       </Avatar>
     )}
     <div
-      className={`p-3 text-sm max-w-[75%] break-words ${
+      className={`p-3 text-sm sm:text-base max-w-[80%] md:max-w-[60%] break-words ${
         sender === "agent"
           ? "bg-muted text-foreground rounded-bl-none"
           : "bg-primary text-primary-foreground rounded-br-none"
@@ -72,6 +71,12 @@ const ChatMessage: React.FC<MessageProps> = ({
 );
 
 export default function FullScreenChat() {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   const AIBotIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -153,7 +158,7 @@ export default function FullScreenChat() {
     <div className="h-[90vh] w-full bg-background p-4">
       <Card className="h-full w-full bg-background text-foreground border-none shadow-lg rounded-lg flex flex-col">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xl font-semibold">Your Agent</CardTitle>
+          <CardTitle className="text-lg sm:text-xl font-semibold">Your Agent</CardTitle>
         </CardHeader>
         <CardContent className="flex-grow overflow-y-auto px-4 py-2 custom-scrollbar">
           {messages.map((msg, index) => (
@@ -165,39 +170,25 @@ export default function FullScreenChat() {
               avatarFallback={msg.avatarFallback}
             />
           ))}
-          <div className="flex justify-end mt-4">
-            <div className="bg-muted text-muted-foreground p-2 text-xs rounded-md">
-              your text here
-            </div>
-          </div>
+          <div ref={messagesEndRef} />
         </CardContent>
-        <div className="p-4 border-t border-border flex items-center space-x-2 bg-background rounded-b-lg">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:text-foreground rounded-full"
-          >
+        <div className="p-3 border-t border-border flex items-center gap-2 bg-background rounded-b-lg flex-wrap">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground rounded-full">
             <Plus size={20} />
           </Button>
           <Input
             placeholder="Type a message..."
-            className="flex-grow bg-muted text-foreground border-none rounded-full px-4 py-2 focus:ring-ring focus:ring-offset-0 placeholder:text-muted-foreground"
+            className="flex-grow min-w-[150px] bg-muted text-foreground border-none rounded-full px-4 py-2 focus:ring-ring focus:ring-offset-0 placeholder:text-muted-foreground"
           />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:text-foreground rounded-full"
-          >
-            <Mic size={20} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:text-foreground rounded-full"
-          >
-            <Image size={20} />
-          </Button>
-          <Button className="ml-2 bg-yellow-400 text-black hover:bg-yellow-500 rounded-full p-2">
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground rounded-full">
+              <Mic size={20} />
+            </Button>
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground rounded-full">
+              <Image size={20} />
+            </Button>
+          </div>
+          <Button className="ml-auto bg-yellow-400 text-black hover:bg-yellow-500 rounded-full p-2">
             <Send size={20} />
           </Button>
         </div>
