@@ -36,9 +36,9 @@ export const loginWithApple = async () => {
 
   try {
     const result = await signInWithPopup(auth, provider);
-    const credential = OAuthProvider.credentialFromResult(result);
-    const accessToken = credential?.accessToken;
-    const idToken = credential?.idToken;
+   // const credential = OAuthProvider.credentialFromResult(result);
+    // const accessToken = credential?.accessToken;
+    // const idToken = credential?.idToken;
 
     const user = result.user;
     console.log("Apple login success:", user);
