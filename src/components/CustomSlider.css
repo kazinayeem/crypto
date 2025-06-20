@@ -1,0 +1,65 @@
+/* Hide default dots */
+.rc-slider-dot {
+  display: none !important;
+}
+
+/* Inactive track (rail) */
+.rc-slider-rail {
+  background-color: #444 !important;
+  height: 2px !important;
+}
+
+/* Active track (between start and handle) */
+.rc-slider-track {
+  background-color: white !important;
+  height: 2px !important;
+}
+
+/* Custom diamond-shaped handle */
+.rc-slider-handle {
+  width: 12px !important;
+  height: 12px !important;
+  background-color: #f59e0b !important; /* Tailwind yellow-500 */
+  border: none !important;
+  box-shadow: none !important;
+  margin-left: -6px !important;
+  margin-top: -5px !important;
+  transform: rotate(45deg); /* Diamond shape */
+  border-radius: 2px;
+  cursor: grab;
+  z-index: 1;
+}
+
+.rc-slider-handle:active {
+  cursor: grabbing;
+}
+
+/* Mark label text */
+.rc-slider-mark-text {
+  color: #a0aec0 !important; /* Tailwind gray-400 */
+  font-size: 0.75rem !important; /* text-xs */
+  white-space: nowrap;
+  transform: translateX(-50%);
+  position: absolute !important;
+  top: 14px !important; /* Distance from rail */
+}
+
+/* Optional: Add diamond-style ticks (inactive dots) */
+.rc-slider-mark-text::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 8px;
+  height: 8px;
+  background-color: #2d2d2d; /* dim diamond */
+  border: 1px solid #888;
+  border-radius: 2px;
+}
+
+/* Optional: highlight selected mark */
+.rc-slider-mark-text-selected::before {
+  background-color: #fff;
+  border-color: #fff;
+}

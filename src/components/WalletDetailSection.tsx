@@ -4,14 +4,15 @@ import { Button } from "./ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { WalletData } from "@/wallets";
 
-// Placeholder components
 const SpotAssetItem: React.FC<any> = ({ name, amount, usdValue, iconUrl }) => (
   <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
     <div className="flex items-center space-x-3">
       <img src={iconUrl} alt={name} className="w-6 h-6 rounded-full" />
-      <p className="font-medium text-gray-900 dark:text-white">{name}</p>
+      <p className="font-medium text-gray-900 dark:text-white truncate">
+        {name}
+      </p>
     </div>
-    <div className="text-right">
+    <div className="text-right min-w-[100px]">
       <p className="font-medium text-gray-900 dark:text-white">
         {amount.toFixed(4)}
       </p>
@@ -30,13 +31,25 @@ const SpotOpenOrderItem: React.FC<any> = ({
   tp_sl,
   date,
 }) => (
-  <div className="bg-[#2a2a2a] p-3 rounded-md text-sm">
-    <p><strong>Pair:</strong> {pair}</p>
-    <p><strong>Type:</strong> {type}</p>
-    <p><strong>Amount:</strong> {amount}</p>
-    <p><strong>Price:</strong> {price}</p>
-    <p><strong>TP/SL:</strong> {tp_sl}</p>
-    <p><strong>Date:</strong> {date}</p>
+  <div className="bg-[#2a2a2a] p-3 rounded-md text-sm space-y-1">
+    <p>
+      <strong>Pair:</strong> {pair}
+    </p>
+    <p>
+      <strong>Type:</strong> {type}
+    </p>
+    <p>
+      <strong>Amount:</strong> {amount}
+    </p>
+    <p>
+      <strong>Price:</strong> {price}
+    </p>
+    <p>
+      <strong>TP/SL:</strong> {tp_sl}
+    </p>
+    <p>
+      <strong>Date:</strong> {date}
+    </p>
   </div>
 );
 
@@ -47,32 +60,59 @@ const FuturesPositionItem: React.FC<any> = ({
   sizeUsdt,
   leverage,
 }) => (
-  <div className="bg-[#2a2a2a] p-3 rounded-md text-sm">
-    <p><strong>Pair:</strong> {pair}</p>
-    <p><strong>PnL (USDT):</strong> {pnlUsdt.toFixed(2)}</p>
-    <p><strong>ROI:</strong> {roi.toFixed(2)}%</p>
-    <p><strong>Size (USDT):</strong> {sizeUsdt.toFixed(2)}</p>
-    <p><strong>Leverage:</strong> {leverage}</p>
-  </div>
-);
-
-const TradePairItem: React.FC<any> = ({ ticker, change24hrs, iconUrl }) => (
-  <div className="bg-[#2a2a2a] p-3 rounded-md text-sm flex items-center space-x-2">
-    <img src={iconUrl} alt={ticker} className="w-5 h-5 rounded-full" />
+  <div className="bg-[#2a2a2a] p-3 rounded-md text-sm space-y-1">
     <p>
-      <strong>{ticker}:</strong> {change24hrs.toFixed(2)}% (24h Change)
+      <strong>Pair:</strong> {pair}
+    </p>
+    <p>
+      <strong>PnL (USDT):</strong> {pnlUsdt.toFixed(2)}
+    </p>
+    <p>
+      <strong>ROI:</strong> {roi.toFixed(2)}%
+    </p>
+    <p>
+      <strong>Size (USDT):</strong> {sizeUsdt.toFixed(2)}
+    </p>
+    <p>
+      <strong>Leverage:</strong> {leverage}
     </p>
   </div>
 );
 
+const TradePairItem: React.FC<any> = ({
+  ticker,
+  change24hrs,
+  iconUrl,
+  onClick,
+}) => (
+  <div
+    className="bg-[#2a2a2a] p-3 rounded-md text-sm flex items-center space-x-2 cursor-pointer" // Add cursor-pointer for visual cue
+    onClick={onClick} // Add onClick handler
+  >
+    <img
+      src={iconUrl}
+      alt={ticker}
+      className="w-5 h-5 rounded-full flex-shrink-0"
+    />
+    <p className="truncate">
+      <strong>{ticker}:</strong> {change24hrs.toFixed(2)}% (24h Change)
+    </p>
+
+    <Button className="ml-auto bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
+      Trade
+    </Button>
+  </div>
+);
 interface WalletDetailSectionProps {
   wallet: WalletData;
   onClose: () => void;
+  onTradePairClick: (pair: any) => void;
 }
 
 export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
   wallet,
   onClose,
+  onTradePairClick,
 }) => {
   const [activeMainTab, setActiveMainTab] = useState("Spot");
   const [activeSpotSubTab, setActiveSpotSubTab] = useState("Balance");
@@ -95,20 +135,25 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
   const getHeaderValue = () => {
     switch (activeMainTab) {
       case "Spot":
-        return `$${wallet.assets.reduce((sum, asset) => sum + asset.usdValue, 0).toFixed(2)}`;
+        return `$${wallet.assets
+          .reduce((sum, asset) => sum + asset.usdValue, 0)
+          .toFixed(2)}`;
       case "Futures":
-        return `$${wallet.futuresPositions.reduce((sum, pos) => sum + pos.sizeUsdt, 0).toFixed(2)}`;
+        return `$${wallet.futuresPositions
+          .reduce((sum, pos) => sum + pos.sizeUsdt, 0)
+          .toFixed(2)}`;
       case "Trade":
         return `$${wallet.balance.toFixed(2)}`;
+      case "Fund Transfer":
       default:
         return `$${wallet.balance.toFixed(2)}`;
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-transparent text-gray-100">
-      <CardHeader className="border-b border-[#333] flex items-center justify-between">
-        <CardTitle className="text-lg font-bold text-gray-100 uppercase tracking-wide">
+    <section className="flex flex-col h-full bg-transparent text-gray-100">
+      <CardHeader className="border-b border-[#333] flex items-center justify-between px-4 py-2">
+        <CardTitle className="text-lg font-bold uppercase tracking-wide truncate max-w-[75%] sm:max-w-full">
           {wallet.name.toUpperCase()} BALANCE
         </CardTitle>
         <Button
@@ -116,21 +161,23 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
           size="icon"
           onClick={onClose}
           aria-label="Close wallet detail"
-          className="rounded-full border-red-900 border-3 text-gray-400 hover:text-gray-200"
+          className="rounded-full border border-red-900 text-gray-400 hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500"
         >
           <X size={25} color="red" />
         </Button>
       </CardHeader>
 
-      <CardContent className="p-0 pt-4 flex flex-col flex-grow">
-        <p className="text-3xl font-bold text-yellow-500 mb-2">
+      <CardContent className="p-4 flex flex-col flex-grow min-h-0">
+        <p className="text-3xl font-bold text-yellow-500 mb-3 truncate">
           {getHeaderValue()}
         </p>
 
-        <div className="flex items-center space-x-4 text-sm mb-4">
-          <div className="flex items-center">
-            <span className="mr-1 text-gray-400">Today</span>
-            <span className={`${todayChangeColor} flex items-center`}>
+        <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm mb-6">
+          <div className="flex items-center space-x-1">
+            <span className="text-gray-400">Today</span>
+            <span
+              className={`${todayChangeColor} flex items-center font-semibold`}
+            >
               {wallet.todayChange >= 0 ? "+" : ""}
               {wallet.todayChange}%
               <span className="ml-1 text-xs">
@@ -138,9 +185,11 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
               </span>
             </span>
           </div>
-          <div className="flex items-center">
-            <span className="mr-1 text-gray-400">Last 7 days</span>
-            <span className={`${last7DaysChangeColor} flex items-center`}>
+          <div className="flex items-center space-x-1">
+            <span className="text-gray-400">Last 7 days</span>
+            <span
+              className={`${last7DaysChangeColor} flex items-center font-semibold`}
+            >
               {wallet.last7DaysChange >= 0 ? "+" : ""}
               {wallet.last7DaysChange}%
               <span className="ml-1 text-xs">
@@ -150,7 +199,8 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
           </div>
         </div>
 
-        <div className="flex border-b border-[#333] mb-4">
+        {/* Main Tabs */}
+        <div className="flex border-b border-[#333] mb-4 whitespace-nowrap overflow-x-auto">
           {["Spot", "Futures", "Fund Transfer", "Trade"].map((tab) => (
             <Button
               key={tab}
@@ -160,52 +210,62 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
                 setActiveSpotSubTab("Balance");
                 setActiveFuturesSubTab("Positions");
               }}
-              className={`pb-2 rounded-none border-b-2 text-sm px-2 sm:px-4 ${
-                activeMainTab === tab
-                  ? "border-yellow-500 text-yellow-500"
-                  : "border-transparent text-gray-400 hover:text-gray-200"
-              }`}
+              className={`pb-2 rounded-none border-b-2 whitespace-nowrap
+        text-sm sm:text-xs md:text-sm
+        px-2 sm:px-2 md:px-4
+        ${
+          activeMainTab === tab
+            ? "border-yellow-500 text-yellow-500"
+            : "border-transparent text-gray-400 hover:text-gray-200"
+        }`}
             >
               {tab}
             </Button>
           ))}
         </div>
 
-        <div className="flex-grow overflow-y-auto custom-scrollbar pr-2">
-          {wallet.loading && (
-            <p className="text-yellow-400 text-center py-4">
+        <main className="flex-grow overflow-y-auto custom-scrollbar min-h-0">
+          {wallet.loading ? (
+            <p className="text-yellow-400 text-center py-6">
               Loading {wallet.name} data...
             </p>
-          )}
-          {wallet.error && (
-            <p className="text-red-500 text-center py-4">
+          ) : wallet.error ? (
+            <p className="text-red-500 text-center py-6">
               Error loading {wallet.name} data: {wallet.error}
             </p>
-          )}
-
-          {!wallet.loading && !wallet.error && (
+          ) : (
             <>
+              {/* Spot Tab */}
               {activeMainTab === "Spot" && (
                 <>
-                  <div className="flex border-b border-[#2a2a2a] mb-4">
+                  {/* Spot Sub Tabs */}
+                  <nav
+                    aria-label="Spot wallet sub tabs"
+                    className="flex flex-wrap border-b border-[#2a2a2a] mb-4"
+                  >
                     {["Balance", "Open Orders", "History"].map((subTab) => (
                       <Button
                         key={subTab}
                         variant="ghost"
                         onClick={() => setActiveSpotSubTab(subTab)}
-                        className={`pb-2 rounded-none border-b-2 text-xs px-2 ${
+                        className={`pb-2 rounded-none border-b-2 text-xs px-3 whitespace-nowrap ${
                           activeSpotSubTab === subTab
                             ? "border-gray-500 text-gray-100"
                             : "border-transparent text-gray-400 hover:text-gray-200"
                         }`}
+                        aria-current={
+                          activeSpotSubTab === subTab ? "page" : undefined
+                        }
+                        type="button"
                       >
                         {subTab === "Open Orders"
                           ? `Open Orders (${wallet.spotOpenOrders.length})`
                           : subTab}
                       </Button>
                     ))}
-                  </div>
+                  </nav>
 
+                  {/* Spot Sub Tab Content */}
                   {activeSpotSubTab === "Balance" && (
                     <div className="space-y-2">
                       {wallet.assets.length > 0 ? (
@@ -248,26 +308,34 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
                 </>
               )}
 
+              {/* Futures Tab */}
               {activeMainTab === "Futures" && (
                 <>
-                  <div className="flex border-b border-[#2a2a2a] mb-4">
+                  <nav
+                    aria-label="Futures wallet sub tabs"
+                    className="flex flex-wrap border-b border-[#2a2a2a] mb-4"
+                  >
                     {["Positions", "Open Orders", "History"].map((subTab) => (
                       <Button
                         key={subTab}
                         variant="ghost"
                         onClick={() => setActiveFuturesSubTab(subTab)}
-                        className={`pb-2 rounded-none border-b-2 text-xs px-2 ${
+                        className={`pb-2 rounded-none border-b-2 text-xs px-3 whitespace-nowrap ${
                           activeFuturesSubTab === subTab
                             ? "border-gray-500 text-gray-100"
                             : "border-transparent text-gray-400 hover:text-gray-200"
                         }`}
+                        aria-current={
+                          activeFuturesSubTab === subTab ? "page" : undefined
+                        }
+                        type="button"
                       >
                         {subTab === "Positions"
                           ? `Positions (${wallet.futuresPositions.length})`
                           : subTab}
                       </Button>
                     ))}
-                  </div>
+                  </nav>
                   {activeFuturesSubTab === "Positions" && (
                     <div className="space-y-2">
                       {wallet.futuresPositions.length > 0 ? (
@@ -297,25 +365,29 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
                 </>
               )}
 
+              {/* Fund Transfer Tab */}
               {activeMainTab === "Fund Transfer" && (
                 <p className="text-gray-400 text-center py-4">
                   Fund Transfer content will go here.
                 </p>
               )}
 
+              {/* Trade Tab */}
               {activeMainTab === "Trade" && (
                 <>
                   <div className="mb-4 relative">
                     <input
-                      type="text"
+                      type="search"
                       placeholder="Search"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full pl-10 pr-4 py-2 rounded-md bg-[#2a2a2a] text-gray-100 border border-[#333] focus:outline-none focus:border-yellow-500"
+                      aria-label="Search trade pairs"
                     />
                     <Search
-                      className="absolute left-3 top-3 text-gray-400"
+                      className="absolute left-3 top-2.5 text-gray-400 pointer-events-none"
                       size={16}
+                      aria-hidden="true"
                     />
                   </div>
                   <div className="space-y-2 overflow-y-auto max-h-[300px] custom-scrollbar">
@@ -324,6 +396,7 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
                         <TradePairItem
                           key={`${pair.ticker}-${index}`}
                           {...pair}
+                          onClick={() => onTradePairClick(pair)}
                         />
                       ))
                     ) : (
@@ -336,8 +409,8 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
               )}
             </>
           )}
-        </div>
+        </main>
       </CardContent>
-    </div>
+    </section>
   );
 };

@@ -8,11 +8,15 @@ import { useSelector, useDispatch } from "react-redux";
 import type { WalletData } from "@/wallets";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchBybitWalletData } from "@/features/wallets/walletsSlice";
+import { TradePage } from "./TradePage";
 
 export function PortfolioDashboard() {
-  const [activeView, setActiveView] = useState<"list" | "detail">("list");
+  const [activeView, setActiveView] = useState<"list" | "detail" | "tradePage">(
+    "list"
+  );
   const [selectedWallet, setSelectedWallet] = useState<WalletData | null>(null);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [selectedTradePair, setSelectedTradePair] = useState<any | null>(null);
 
   const wallets = useSelector((state: RootState) => state.wallets.wallets);
   const dispatch = useDispatch<AppDispatch>();
@@ -36,6 +40,15 @@ export function PortfolioDashboard() {
   const handleWalletClick = (wallet: WalletData) => {
     setSelectedWallet(wallet);
     setActiveView("detail");
+  };
+  const handleTradePairClick = (pair: any) => {
+    setSelectedTradePair(pair);
+    setActiveView("tradePage");
+  };
+
+  const handleCloseTradePage = () => {
+    setActiveView("detail"); // Or "list" depending on desired flow
+    setSelectedTradePair(null);
   };
 
   const handleCloseDetail = () => {
@@ -118,6 +131,24 @@ export function PortfolioDashboard() {
               <WalletDetailSection
                 wallet={selectedWallet}
                 onClose={handleCloseDetail}
+                onTradePairClick={handleTradePairClick}
+              />
+            </motion.div>
+          )}
+          {activeView === "tradePage" && selectedTradePair && (
+            <motion.div
+              key="trade"
+              custom={direction}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              variants={variants}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="flex flex-col h-full overflow-auto"
+            >
+              <TradePage
+                tradePair={selectedTradePair}
+                onClose={handleCloseTradePage}
               />
             </motion.div>
           )}
@@ -150,4 +181,3 @@ export function PortfolioDashboard() {
     </div>
   );
 }
-

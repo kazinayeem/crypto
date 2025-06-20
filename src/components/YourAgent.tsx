@@ -1,88 +1,24 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useEffect, useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Send, Image, Mic, Plus } from "lucide-react";
-import React, { useRef, useEffect } from "react";
+import React from "react";
 
 interface MessageProps {
   sender: "agent" | "user";
   text: string;
-  avatarIcon?: React.ReactNode;
   avatarFallback: string;
 }
 
-const ChatMessage: React.FC<MessageProps> = ({
-  sender,
-  text,
-  avatarIcon,
-  avatarFallback,
-}) => (
-  <div
-    className={`flex items-start mb-4 ${
-      sender === "user" ? "justify-end" : ""
-    }`}
-  >
-    {sender === "agent" && (
-      <Avatar className="mr-2 border-none">
-        {avatarIcon ? (
-          <div className="w-full h-full rounded-full bg-yellow-400 flex items-center justify-center">
-            {avatarIcon}
-          </div>
-        ) : (
-          <AvatarFallback className="bg-yellow-400 text-gray-900 font-bold">
-            {avatarFallback}
-          </AvatarFallback>
-        )}
-      </Avatar>
-    )}
-    <div
-      className={`p-3 text-sm sm:text-base max-w-[80%] md:max-w-[60%] break-words ${
-        sender === "agent"
-          ? "bg-muted text-foreground rounded-bl-none"
-          : "bg-primary text-primary-foreground rounded-br-none"
-      }`}
-      style={{
-        borderRadius:
-          sender === "agent" ? "12px 12px 12px 2px" : "12px 12px 2px 12px",
-      }}
-    >
-      {text}
-    </div>
-    {sender === "user" && (
-      <Avatar className="ml-2 border-none">
-        {avatarIcon ? (
-          <div className="w-full h-full rounded-full bg-primary flex items-center justify-center">
-            {avatarIcon}
-          </div>
-        ) : (
-          <AvatarFallback className="bg-primary text-primary-foreground font-bold">
-            {avatarFallback}
-          </AvatarFallback>
-        )}
-      </Avatar>
-    )}
-  </div>
-);
-
-export default function FullScreenChat() {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
-
+const ChatMessage: React.FC<MessageProps> = ({ sender, text }) => {
   const AIBotIcon = (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="w-5 h-5 text-gray-900"
+      className="w-4 h-4 text-gray-900"
     >
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9v-2h2v2zm0-4H9V8h2v4zm4 4h-2v-2h2v2zm0-4h-2V8h2v4zm-1.5-7.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5S14 5.67 14 6.5s-.67 1.5-1.5 1.5z" />
     </svg>
@@ -93,7 +29,7 @@ export default function FullScreenChat() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="w-5 h-5 text-white"
+      className="w-4 h-4 text-black"
     >
       <path
         fillRule="evenodd"
@@ -103,95 +39,171 @@ export default function FullScreenChat() {
     </svg>
   );
 
+  return (
+    <div
+      className={`flex items-start mb-4 gap-2 ${
+        sender === "user" ? "justify-end flex-row-reverse" : "justify-start"
+      }`}
+    >
+      <div
+        className={`relative p-3 text-sm sm:text-base max-w-[80%] md:max-w-[60%] break-words flex items-end ${
+          sender === "agent"
+            ? "bg-[#393b78] text-white rounded-tr-xl rounded-bl-xl rounded-br-xl rounded-tl-sm pr-10"
+            : "bg-gray-200 text-black rounded-tl-xl rounded-bl-xl rounded-br-xl rounded-tr-sm pl-10"
+        }`}
+      >
+        {text}
+        <Avatar
+          className={`absolute bottom-0 ${
+            sender === "agent" ? "-right-5" : "-left-5"
+          } border-2 border-[#191919] z-10`}
+        >
+          <AvatarFallback
+            className={`${
+              sender === "agent"
+                ? "bg-yellow-400 text-gray-900"
+                : "bg-white text-black"
+            } font-bold w-full h-full flex items-center justify-center`}
+          >
+            {sender === "agent" ? AIBotIcon : UserAvatarIcon}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+    </div>
+  );
+};
+
+export default function FullScreenChat() {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   const messages = [
     {
-      sender: "agent" as const,
-      text: "What's STC doing right now?",
-      avatarIcon: AIBotIcon,
-      avatarFallback: "AI",
+      sender: "user" as const,
+      text: "What's BTC doing right now?",
+      avatarFallback: "ME",
     },
     {
       sender: "agent" as const,
-      text: "Bitcoin's riding a mid-wave - up 14% in the last hour\nMight be warming up for a breakout... or just teasing us again",
-      avatarIcon: AIBotIcon,
+      text: "Bitcoin's riding a mild wave —\nup 1.4% in the last hour.\nMight be warming up for a breakout…\nor just teasing us again.",
       avatarFallback: "AI",
     },
     {
       sender: "user" as const,
       text: "ADA-USD",
-      avatarIcon: UserAvatarIcon,
-      avatarFallback: "DD",
+      avatarFallback: "ME",
     },
     {
       sender: "agent" as const,
-      text: "User: Amet DD ADA USD\nCrypto AI\n✅ Analyzing ADA-USD\nCurrent price: $0.42\n⬇ Down 1% in the last 6 hours\n📈 RSI: 38 (nearing oversold)\n⚠️ A potential bounce zone ahead",
-      avatarIcon: AIBotIcon,
+      text: `User: Asset ID: ADA-USD\nCrypto AI:\n✅ Analyzing ADA-USD...\n💵 Current price: $0.42\n📉 Down 1.1% in the last 6 hours\n📊 RSI: 38 (nearing oversold)\n⚠️ Potential bounce zone ahead.\nMight be a good time to watch for a reversal signal.`,
       avatarFallback: "AI",
     },
     {
       sender: "user" as const,
-      text: "is the market bullish or bearish today?",
-      avatarIcon: UserAvatarIcon,
-      avatarFallback: "DD",
+      text: "Is the market bullish or bearish today?",
+      avatarFallback: "ME",
     },
     {
       sender: "agent" as const,
-      text: "It's giving neutral vibes - some coins climbing, others cooling off. Feels like the calm before the next wave",
-      avatarIcon: AIBotIcon,
-      avatarFallback: "AI",
-    },
-    {
-      sender: "user" as const,
-      text: "How's my portfolio doing today?",
-      avatarIcon: UserAvatarIcon,
-      avatarFallback: "DD",
-    },
-    {
-      sender: "agent" as const,
-      text: "You're up 3.7% ETH's comeback is leading the charge. ADA and MATIC are holding steady - chill but solid",
-      avatarIcon: AIBotIcon,
+      text: "It's giving neutral vibes — some coins climbing, others cooling off. Feels like the calm before the next wave.",
       avatarFallback: "AI",
     },
   ];
 
   return (
-    <div className="h-[90vh] w-full bg-background p-4">
-      <Card className="h-full w-full bg-background text-foreground border-none shadow-lg rounded-lg flex flex-col">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg sm:text-xl font-semibold">Your Agent</CardTitle>
+    <div className="min-h-screen w-full bg-gradient-to-b from-[#0f0f23] to-[#1e1e2f]  flex justify-center font-sans">
+      <Card
+        className="w-full md:w-[380px] h-[90vh] text-gray-100 border border-[#333] shadow-lg rounded-xl flex flex-col overflow-hidden"
+        style={{
+          background: "#191919",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+        }}
+      >
+        <CardHeader className="pb-2 border-b border-[#333]">
+          <CardTitle className="text-lg sm:text-xl font-semibold text-yellow-400">
+            Your Agent
+          </CardTitle>
         </CardHeader>
+
         <CardContent className="flex-grow overflow-y-auto px-4 py-2 custom-scrollbar">
           {messages.map((msg, index) => (
             <ChatMessage
               key={index}
               sender={msg.sender}
               text={msg.text}
-              avatarIcon={msg.avatarIcon}
               avatarFallback={msg.avatarFallback}
             />
           ))}
+          <div className="flex justify-center my-4">
+            <div className="bg-[#393b78] text-gray-300 text-sm py-2 px-4 rounded-full max-w-[80%] text-center border border-[#333]">
+              That's all for now!{" "}
+              <span className="underline underline-offset-2 text-white">
+                Upgrade to continue chatting with your AI assistant.
+              </span>
+            </div>
+          </div>
           <div ref={messagesEndRef} />
         </CardContent>
-        <div className="p-3 border-t border-border flex items-center gap-2 bg-background rounded-b-lg flex-wrap">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground rounded-full">
+
+        <div className="p-3 border-t border-[#333] flex items-center gap-2 bg-transparent flex-wrap">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:text-white rounded-full"
+          >
             <Plus size={20} />
           </Button>
           <Input
-            placeholder="Type a message..."
-            className="flex-grow min-w-[150px] bg-muted text-foreground border-none rounded-full px-4 py-2 focus:ring-ring focus:ring-offset-0 placeholder:text-muted-foreground"
+            placeholder="Your text here"
+            className="flex-grow min-w-[150px] bg-[#292a55] text-white border-none rounded-full px-4 py-2 focus:ring-ring focus:ring-offset-0 placeholder:text-gray-400"
           />
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground rounded-full">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-white rounded-full"
+            >
               <Mic size={20} />
             </Button>
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground rounded-full">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-white rounded-full"
+            >
               <Image size={20} />
             </Button>
           </div>
-          <Button className="ml-auto bg-yellow-400 text-black hover:bg-yellow-500 rounded-full p-2">
+          <Button className="ml-auto bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 w-10 h-10 flex items-center justify-center">
             <Send size={20} />
           </Button>
         </div>
+
+        <style>{`
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+          }
+          .custom-scrollbar {
+            scrollbar-width: none;
+          }
+          @media (hover: hover) and (pointer: fine) {
+            .custom-scrollbar:hover::-webkit-scrollbar {
+              width: 8px;
+              height: 8px;
+            }
+            .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+              background: #555;
+              border-radius: 10px;
+            }
+            .custom-scrollbar:hover::-webkit-scrollbar-track {
+              background: #292a55;
+              border-radius: 10px;
+            }
+          }
+        `}</style>
       </Card>
     </div>
   );

@@ -2,7 +2,6 @@
 import React from "react";
 import { ArrowUpRightFromSquare } from "lucide-react";
 
-// TypeScript interface defining the shape of wallet data
 export interface WalletData {
   id: string;
   name: string;
@@ -47,6 +46,7 @@ export interface WalletData {
   }>;
   loading?: boolean;
   error?: string | null;
+  chartSymbol?: string;
 }
 
 // Initial placeholder for the Bybit wallet

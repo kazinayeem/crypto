@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import GaugeChart from "react-gauge-chart";
 
 interface ApiData {
   name: string;
@@ -16,102 +16,114 @@ interface ApiData {
 }
 
 export function FearGreedIndex() {
-  const [fearGreedValue, setFearGreedValue] = useState<number | null>(null);
-  const [valueClassification, setValueClassification] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [value, setValue] = useState<number | null>(null);
+  const [classification, setClassification] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchFearGreedIndex = async () => {
-      setLoading(true);
-      setError(null);
+    const fetchData = async () => {
       try {
-        const response = await fetch("https://api.alternative.me/fng/?limit=1");
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-        const data: ApiData = await response.json();
-        if (data.data?.length > 0) {
-          setFearGreedValue(parseInt(data.data[0].value, 10));
-          setValueClassification(data.data[0].value_classification);
-        } else {
-          setError("No data found in API response.");
-        }
+        setLoading(true);
+        const res = await fetch("https://api.alternative.me/fng/?limit=1");
+        const json: ApiData = await res.json();
+        const fg = json.data?.[0];
+        if (!fg) throw new Error("No data returned.");
+        setValue(parseInt(fg.value, 10));
+        setClassification(fg.value_classification);
       } catch (e: any) {
-        setError(`Failed to fetch Fear and Greed Index: ${e.message}`);
-        console.error("Error fetching Fear and Greed Index:", e);
+        setError(e.message || "Failed to fetch data.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFearGreedIndex();
-    const intervalId = setInterval(fetchFearGreedIndex, 60 * 60 * 1000);
-    return () => clearInterval(intervalId);
+    fetchData();
+    const id = setInterval(fetchData, 1000 * 60 * 60); // hourly
+    return () => clearInterval(id);
   }, []);
 
-  const getValueBubbleColor = (value: number | null) => {
-    if (value === null) return "bg-gray-500";
-    if (value >= 75) return "bg-green-500";
-    if (value >= 50) return "bg-yellow-400";
-    if (value >= 25) return "bg-orange-500";
-    return "bg-red-500";
+  const angle = value !== null ? (value / 100) * 180 : 0;
+  const getColor = (v: number) => {
+    if (v >= 75) return "#00cc00";
+    if (v >= 50) return "#ffff55";
+    if (v >= 25) return "#ffa500";
+    return "#ff4d00";
   };
 
-  const gaugeValue = fearGreedValue !== null ? fearGreedValue / 100 : 0;
-
   return (
-    <Card className="bg-transparent dark:bg-transparent text-gray-200 border border-border shadow-md w-full h-fit">
-      <CardHeader className="p-4 pb-2">
-        <CardTitle className="text-md text-muted-foreground">
+    <Card className="bg-[#13131a] text-white border border-border w-full h-full">
+      <CardHeader className="pb-1 px-4">
+        <CardTitle className="text-sm text-muted-foreground">
           Fear and Greed Index
         </CardTitle>
       </CardHeader>
-      <CardContent className="relative p-0 min-h-[160px] flex items-center justify-center">
-        {loading ? (
-          <div className="h-[160px] flex items-center justify-center w-full">
-            <p className="text-sm text-muted-foreground">Loading...</p>
-          </div>
-        ) : error ? (
-          <div className="h-[160px] flex items-center justify-center w-full">
-            <p className="text-red-500 text-sm">{error}</p>
-          </div>
+      <CardContent className="p-0 flex items-center justify-center h-full">
+        {loading || error ? (
+          <p className="text-sm text-muted-foreground py-8">
+            {error || "Loading..."}
+          </p>
         ) : (
-          <>
-            <div className="w-full px-4">
-              <GaugeChart
-                id="fear-greed-gauge"
-                nrOfLevels={420}
-                percent={gaugeValue}
-                arcWidth={0.2}
-                colors={["#ff0000", "#ffa500", "#ffff00", "#00ff00"]}
-                arcPadding={0}
-                needleColor="gray"
-                needleBaseColor="gray"
-                hideText
-                cornerRadius={0}
-                animate={false}
-                style={{ background: "transparent" }}
+          <div className="relative w-full h-full flex items-center justify-center">
+            {/* Gauge SVG */}
+            <svg viewBox="0 0 200 100" className="w-full h-full max-h-[150px]">
+              <defs>
+                <linearGradient
+                  id="gauge-gradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stopColor="#ff4d00" />
+                  <stop offset="50%" stopColor="#ffff55" />
+                  <stop offset="100%" stopColor="#00cc00" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M 10 100 A 90 90 0 0 1 190 100"
+                stroke="url(#gauge-gradient)"
+                strokeWidth="14"
+                fill="none"
               />
-            </div>
+            </svg>
 
-            {fearGreedValue !== null && (
-              <div
-                className={`absolute left-1/2 top-[55px] -translate-x-1/2 rounded-full flex flex-col items-center justify-center text-white font-semibold p-2 z-30`}
-                style={{
-                  width: "60px",
-                  height: "60px",
-                  backgroundColor: getValueBubbleColor(fearGreedValue),
-                }}
-              >
-                <span className="text-xl font-bold leading-none">
-                  {fearGreedValue}
-                </span>
-                <span className="text-xs leading-none mt-1 capitalize">
-                  {valueClassification}
-                </span>
-              </div>
-            )}
-          </>
+            {/* Needle */}
+            <motion.div
+              className="absolute w-[3px] h-[60px] bg-white rounded origin-bottom"
+              initial={{ rotate: 0 }}
+              animate={{ rotate: angle - 90 }}
+              transition={{ duration: 0.8 }}
+              style={{
+                left: "50%",
+                bottom: "20px",
+                transform: "translateX(-50%)",
+                transformOrigin: "bottom center",
+              }}
+            />
+
+            {/* Needle Center */}
+            <div className="absolute left-1/2 bottom-[20px] w-4 h-4 bg-white rounded-full transform -translate-x-1/2 translate-y-1/2 z-10" />
+
+            {/* Value Bubble */}
+            <motion.div
+              className="absolute px-3 py-1 text-xs font-bold rounded-full text-black text-center"
+              style={{
+                backgroundColor: getColor(value!),
+                left: `${50 + 40 * Math.cos((angle - 90) * (Math.PI / 180))}%`,
+                bottom: `${
+                  40 + 40 * Math.sin((angle - 90) * (Math.PI / 180))
+                }%`,
+                transform: "translate(-50%, 50%)",
+              }}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="text-base">{value}</div>
+              <div className="text-[10px] capitalize">{classification}</div>
+            </motion.div>
+          </div>
         )}
       </CardContent>
     </Card>

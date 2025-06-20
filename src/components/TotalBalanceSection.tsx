@@ -6,7 +6,7 @@ interface TotalBalanceSectionProps {
   totalBalance: number;
   todayChange: number;
   last7DaysChange: number;
-  isMobileView: boolean;
+  isMobileView?: boolean; // Optional since unused in your code
 }
 
 export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
@@ -14,15 +14,26 @@ export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
   todayChange,
   last7DaysChange,
 }) => {
+  // Helper: Get green/red color class based on positive/negative value
   const getColorClass = (value: number) =>
     value >= 0 ? "text-green-500" : "text-red-500";
 
+  // Helper: Arrow symbol up/down
   const getSymbol = (value: number) => (value >= 0 ? "▲" : "▼");
 
+  // Framer Motion variants for smooth transitions
   const changeVariants = {
     initial: { opacity: 0, y: 10 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -10 },
+  };
+
+  // Format large numbers into short form e.g. 12.3K, 1.2M
+  const formatShortNumber = (num: number) => {
+    if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
+    if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
+    if (num >= 1e3) return (num / 1e3).toFixed(1) + "K";
+    return num.toFixed(2);
   };
 
   return (
@@ -35,14 +46,42 @@ export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
 
       <CardContent className="p-0 flex items-center justify-between">
         <p
-          className="text-[28px] sm:text-[32px] font-bold leading-tight tracking-tight"
-          style={{ color: "#1BCC7A", fontFamily: "Montserrat" }}
+          className="
+            font-bold 
+            leading-tight 
+            tracking-tight
+            text-[28px] sm:text-[30px] md:text-[24px] lg:text-[28px] xl:text-[32px]
+            text-[#1BCC7A]
+            font-montserrat
+            whitespace-nowrap
+          "
         >
-          $
-          {totalBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+          {/* Short format on mobile to large laptops */}
+          <span className="inline xl:hidden">
+            ${formatShortNumber(totalBalance)}
+          </span>
+
+          {/* Full format on xl and larger screens */}
+          <span className="hidden xl:inline">
+            $
+            {totalBalance.toLocaleString(undefined, {
+              maximumFractionDigits: 2,
+            })}
+          </span>
         </p>
 
-        <div className="flex flex-col text-[#e2e2e3] text-xs sm:text-sm min-w-[130px] text-right">
+        <div
+          className="
+            text-[#e2e2e3] 
+            text-xs             /* mobile */
+            sm:text-[11px]      /* small tablets */
+            md:text-[12px]      /* laptops */
+            xl:text-sm          /* desktops */
+            min-w-[130px] 
+            text-right
+            select-none
+          "
+        >
           <div className="flex justify-between mb-1 font-medium opacity-70">
             <span>Today</span>
             <span>7d</span>

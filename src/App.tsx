@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router";
+import DotGrid from "./components/ui/DotGrid";
 
 const App: React.FC = () => {
   const navigation = useNavigate();
@@ -245,7 +246,6 @@ const App: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-
       <header className="relative flex flex-col md:flex-row items-center justify-center pt-8 md:pt-16 pb-8 px-4 md:px-8 overflow-hidden min-h-screen">
         <motion.div
           initial="hidden"
@@ -307,118 +307,295 @@ const App: React.FC = () => {
           />
         </motion.div>
       </header>
-
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={sectionVariants}
-        className="bg-[#0f0e1d] py-16 px-4 md:px-8 text-center flex flex-col justify-center items-center"
+      <div
+        style={mainBackgroundGradientStyle}
+        className="relative w-full overflow-hidden min-h-screen"
       >
-        <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-          Revolutionize Your Crypto <br /> Experience with AI
-        </h2>
-        <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
-          SynthesizeAI is an AI-powered platform designed to simplify your
-          crypto journey. From vital meme creation to AI assistants that
-          automate tasks, we've got everything you need to engage your community
-          and streamline operations.
-        </p>
-        <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 rounded-lg bg-[#ffd31b] text-white text-lg font-semibold hover:bg-[#ccaa00] transition-colors duration-300 shadow-lg"
-          >
-            Get Started
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 rounded-lg border border-white text-white text-lg font-semibold hover:bg-white hover:text-[#0f0e1d] transition-colors duration-300 shadow-lg"
-          >
-            Learn More
-          </motion.button>
+        {/* DotGrid as background for the entire page */}
+        <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+          <DotGrid
+            dotSize={3}
+            gap={40}
+            baseColor="#5227FF"
+            activeColor="#5227FF"
+            proximity={120}
+            shockRadius={250}
+            shockStrength={5}
+            resistance={750}
+            returnDuration={1.5}
+          />
         </div>
-      </motion.section>
 
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.3 }}
-        variants={sectionVariants}
-        className="bg-[#1a1a2e] py-16 px-4 md:px-8"
-      >
-        <div className="max-w-6xl mx-auto bg-[#0f0e1d] rounded-2xl shadow-xl flex flex-col lg:flex-row overflow-hidden min-h-min md:min-h-[500px]">
-          <div className="lg:w-1/3 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-[#16213e]">
-            <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
-              Text to Image generator
-            </h3>
-            <ul className="space-y-3 md:space-y-4 text-gray-300 text-base md:text-lg">
-              <li className="cursor-pointer hover:text-[#ffd31b] transition-colors duration-200">
-                Image to Image generator
-              </li>
-              <li className="cursor-pointer hover:text-[#ffd31b] transition-colors duration-200">
-                Caption generator
-              </li>
-            </ul>
-          </div>
-
-          <div className="lg:w-2/3 p-6 md:p-8 flex flex-col justify-between">
-            <h3 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8">
-              Try Prompts
-            </h3>
-            <div className="flex-grow flex items-center justify-center mb-6 md:mb-8">
-              <div className="w-32 h-32 sm:w-48 sm:h-48 bg-[#16213e] rounded-full flex items-center justify-center shadow-inner">
-                <svg
-                  width="70"
-                  height="70"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-[#ffd31b]"
-                >
-                  <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" />
-                  <polyline points="2 7 12 12 22 7" />
-                  <polyline points="2 17 12 12 22 17" />
-                  <polyline points="12 2V12" />
-                  <line x1="12" y1="22" x2="12" y2="12" />
-                </svg>
-              </div>
-            </div>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Enter your prompt here..."
-                className="w-full p-3 pr-12 md:p-4 md:pr-16 rounded-lg bg-[#2c2c4d] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ffd31b]"
-              />
+        {/* Main content container - sits above the DotGrid */}
+        <div className="relative z-10">
+          {/* Hero Section */}
+          <motion.section
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={sectionVariants}
+            className="relative z-20 py-16 px-4 md:px-8 text-center flex flex-col justify-center items-center"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-white">
+              Revolutionize Your Crypto <br /> Experience with AI
+            </h2>
+            <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
+              SynthesizeAI is an AI-powered platform designed to simplify your
+              crypto journey. From vital meme creation to AI assistants that
+              automate tasks, we've got everything you need to engage your
+              community and streamline operations.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
               <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#ffd31b] p-1 md:p-2 rounded-full hover:bg-[#ccaa00] transition-colors duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 rounded-lg bg-[#ffd31b] text-white text-lg font-semibold hover:bg-[#ccaa00] transition-colors duration-300 shadow-lg"
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="text-white"
-                >
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
+                Get Started
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 rounded-lg border border-white text-white text-lg font-semibold hover:bg-white hover:text-[#0f0e1d] transition-colors duration-300 shadow-lg"
+              >
+                Learn More
               </motion.button>
             </div>
+          </motion.section>
+
+          <div className="max-w-6xl mx-auto bg-[#0d0c1c] rounded-2xl shadow-xl flex flex-col lg:flex-row overflow-hidden min-h-min md:min-h-[500px]">
+            <div className="lg:w-1/3 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-[#16213e]">
+              <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+                Text to Image generator
+              </h3>
+              <ul className="space-y-3 md:space-y-4 text-gray-300 text-base md:text-lg">
+                <li className="cursor-pointer hover:text-[#ffd31b] transition-colors duration-200">
+                  Image to Image generator
+                </li>
+                <li className="cursor-pointer hover:text-[#ffd31b] transition-colors duration-200">
+                  Caption generator
+                </li>
+              </ul>
+            </div>
+
+            <div className="lg:w-2/3 p-6 md:p-8 flex flex-col justify-between">
+              <h3 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8">
+                Try Prompts
+              </h3>
+              <div className="flex-grow flex items-center justify-center mb-6 md:mb-8">
+                <div className="w-32 h-32 sm:w-48 sm:h-48 bg-[#16213e] rounded-full flex items-center justify-center shadow-inner">
+                  <svg
+                    width="70"
+                    height="70"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-[#ffd31b]"
+                  >
+                    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" />
+                    <polyline points="2 7 12 12 22 7" />
+                    <polyline points="2 17 12 12 22 17" />
+                    <polyline points="12 2V12" />
+                    <line x1="12" y1="22" x2="12" y2="12" />
+                  </svg>
+                </div>
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Enter your prompt here..."
+                  className="w-full p-3 pr-12 md:p-4 md:pr-16 rounded-lg bg-[#2c2c4d] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ffd31b]"
+                />
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#ffd31b] p-1 md:p-2 rounded-full hover:bg-[#ccaa00] transition-colors duration-300"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-white"
+                  >
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </motion.button>
+              </div>
+            </div>
           </div>
         </div>
-      </motion.section>
+        <br
+          style={{
+            marginBottom: "10px",
+          }}
+        />
+        <br
+          style={{
+            marginBottom: "10px",
+          }}
+        />
+        <br
+          style={{
+            marginBottom: "10px",
+          }}
+        />
+        <br
+          style={{
+            marginBottom: "10px",
+          }}
+        />
+        <br
+          style={{
+            marginBottom: "10px",
+          }}
+        />
+        <br
+          style={{
+            marginBottom: "10px",
+          }}
+        />
+        <br
+          style={{
+            marginBottom: "10px",
+          }}
+        />
+      </div>
+      {/* <div
+        style={mainBackgroundGradientStyle}
+        className="relative w-full overflow-hidden"
+      >
+        <div
+          className={cn(
+            "absolute inset-0 z-0",
+            "[background-size:20px_20px]",
+            "[background-image:radial-gradient(#d4d4d4_1px,transparent_1px)]",
+            "dark:[background-image:radial-gradient(#404040_1px,transparent_1px)]"
+          )}
+        />
+        <div className="pointer-events-none absolute inset-0 z-10 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
+
+        <div className="relative z-20">
+          <motion.section
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            variants={sectionVariants}
+            className="relative z-20 py-16 px-4 md:px-8 text-center flex flex-col justify-center items-center"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+              Revolutionize Your Crypto <br /> Experience with AI
+            </h2>
+            <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
+              SynthesizeAI is an AI-powered platform designed to simplify your
+              crypto journey. From vital meme creation to AI assistants that
+              automate tasks, we've got everything you need to engage your
+              community and streamline operations.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 rounded-lg bg-[#ffd31b] text-white text-lg font-semibold hover:bg-[#ccaa00] transition-colors duration-300 shadow-lg"
+              >
+                Get Started
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 rounded-lg border border-white text-white text-lg font-semibold hover:bg-white hover:text-[#0f0e1d] transition-colors duration-300 shadow-lg"
+              >
+                Learn More
+              </motion.button>
+            </div>
+          </motion.section>
+        </div>
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          variants={sectionVariants}
+          className="bg-[#1a1a2e] py-16 px-4 md:px-8"
+        >
+          <div className="max-w-6xl mx-auto bg-[#0d0c1c] rounded-2xl shadow-xl flex flex-col lg:flex-row overflow-hidden min-h-min md:min-h-[500px]">
+            <div className="lg:w-1/3 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-[#16213e]">
+              <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+                Text to Image generator
+              </h3>
+              <ul className="space-y-3 md:space-y-4 text-gray-300 text-base md:text-lg">
+                <li className="cursor-pointer hover:text-[#ffd31b] transition-colors duration-200">
+                  Image to Image generator
+                </li>
+                <li className="cursor-pointer hover:text-[#ffd31b] transition-colors duration-200">
+                  Caption generator
+                </li>
+              </ul>
+            </div>
+
+            <div className="lg:w-2/3 p-6 md:p-8 flex flex-col justify-between">
+              <h3 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8">
+                Try Prompts
+              </h3>
+              <div className="flex-grow flex items-center justify-center mb-6 md:mb-8">
+                <div className="w-32 h-32 sm:w-48 sm:h-48 bg-[#16213e] rounded-full flex items-center justify-center shadow-inner">
+                  <svg
+                    width="70"
+                    height="70"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-[#ffd31b]"
+                  >
+                    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" />
+                    <polyline points="2 7 12 12 22 7" />
+                    <polyline points="2 17 12 12 22 17" />
+                    <polyline points="12 2V12" />
+                    <line x1="12" y1="22" x2="12" y2="12" />
+                  </svg>
+                </div>
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Enter your prompt here..."
+                  className="w-full p-3 pr-12 md:p-4 md:pr-16 rounded-lg bg-[#2c2c4d] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ffd31b]"
+                />
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#ffd31b] p-1 md:p-2 rounded-full hover:bg-[#ccaa00] transition-colors duration-300"
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-white"
+                  >
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </motion.button>
+              </div>
+            </div>
+          </div>
+        </motion.section>
+      </div> */}
 
       <motion.section
         initial="hidden"

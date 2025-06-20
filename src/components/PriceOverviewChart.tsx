@@ -1,83 +1,251 @@
-// src/components/PriceOverviewChart.tsx
-import {
-  ComposedChart,
-  Line,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceLine,
-} from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import React, { useEffect, useRef, useState } from "react";
+import * as d3 from "d3";
 
-// Sample data format
-const depthData = [
-  { price: 104080, buyCumulative: 35, sellCumulative: 0, buyVolume: 8, sellVolume: 0 },
-  { price: 104090, buyCumulative: 28, sellCumulative: 5, buyVolume: 6, sellVolume: 5 },
-  { price: 104100, buyCumulative: 20, sellCumulative: 10, buyVolume: 4, sellVolume: 5 },
-  { price: 104110, buyCumulative: 12, sellCumulative: 18, buyVolume: 4, sellVolume: 8 },
-  { price: 104120, buyCumulative: 6, sellCumulative: 28, buyVolume: 2, sellVolume: 10 },
-  { price: 104130, buyCumulative: 0, sellCumulative: 40, buyVolume: 0, sellVolume: 12 },
-];
+interface Order {
+  pr: number;
+  vol: number;
+}
 
-export function PriceOverviewChart() {
-  const currentPrice = 104124.99;
+interface SimulatedData {
+  bids: Order[];
+  asks: Order[];
+  imbalance: number;
+  spoof_score: number;
+  manipulation: number;
+  priceLast: number;
+}
+
+const generateSimulatedData = (): SimulatedData => {
+  const centerPrice = 50000 + (Math.random() - 0.5) * 1000;
+  const bids: Order[] = [];
+  const asks: Order[] = [];
+  const levels = 50;
+  const step = 10;
+
+  for (let i = 0; i < levels; i++) {
+    bids.push({ pr: centerPrice - i * step, vol: Math.random() * 5 + 1 });
+    asks.push({ pr: centerPrice + i * step, vol: Math.random() * 5 + 1 });
+  }
+
+  const vb = bids.reduce((sum, d) => sum + d.vol, 0);
+  const va = asks.reduce((sum, d) => sum + d.vol, 0);
+  const imbalance = (vb - va) / (vb + va);
+  const spoof_score = Math.random() * 0.1;
+  const manipulation = Math.abs(imbalance) * spoof_score;
+
+  return {
+    bids,
+    asks,
+    imbalance,
+    spoof_score,
+    manipulation,
+    priceLast: centerPrice,
+  };
+};
+
+const PriceOverviewChart: React.FC = () => {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [data, setData] = useState<SimulatedData>(generateSimulatedData);
+
+  const drawChart = (
+    bids: Order[],
+    asks: Order[],
+    price: number,
+    statusColor: string
+  ) => {
+    const svg = d3.select(svgRef.current);
+    svg.selectAll("*").remove();
+
+    const width = svgRef.current?.clientWidth || 600;
+    const height = svgRef.current?.clientHeight || 400;
+    const margin = { top: 20, right: 40, bottom: 50, left: 60 };
+
+    let cumB: any[] = [],
+      cumA: any[] = [],
+      sumB = 0,
+      sumA = 0;
+    bids.forEach((d) => {
+      sumB += d.vol;
+      cumB.push({ p: d.pr, v: sumB });
+    });
+    asks.forEach((d) => {
+      sumA += d.vol;
+      cumA.push({ p: d.pr, v: sumA });
+    });
+
+    const x = d3
+      .scaleLinear()
+      .domain(d3.extent([...cumB, ...cumA], (d) => d.p) as [number, number])
+      .range([margin.left, width - margin.right]);
+
+    const y = d3
+      .scaleLinear()
+      .domain([0, d3.max([...cumB, ...cumA], (d) => d.v) || 1])
+      .range([height - margin.bottom, margin.top]);
+
+    const barWidth = 4;
+    const volScale = d3
+      .scaleLinear()
+      .domain([0, d3.max([...bids, ...asks], (d) => d.vol) || 1])
+      .range([0, 60]);
+
+    const baseline = y(0);
+
+    svg
+      .selectAll(".barB")
+      .data(bids)
+      .enter()
+      .append("rect")
+      .attr("x", (d) => x(d.pr) - barWidth / 2)
+      .attr("y", (d) => baseline - volScale(d.vol))
+      .attr("width", barWidth)
+      .attr("height", (d) => volScale(d.vol))
+      .attr("fill", "#22c55e");
+
+    svg
+      .selectAll(".barA")
+      .data(asks)
+      .enter()
+      .append("rect")
+      .attr("x", (d) => x(d.pr) - barWidth / 2)
+      .attr("y", (d) => baseline - volScale(d.vol))
+      .attr("width", barWidth)
+      .attr("height", (d) => volScale(d.vol))
+      .attr("fill", "#ef4444");
+
+    const line = d3
+      .line<any>()
+      .x((d) => x(d.p))
+      .y((d) => y(d.v));
+
+    svg
+      .append("path")
+      .datum(cumB)
+      .attr("d", line)
+      .attr("stroke", "#22c55e")
+      .attr("stroke-width", 2)
+      .attr("fill", "none");
+
+    svg
+      .append("path")
+      .datum(cumA)
+      .attr("d", line)
+      .attr("stroke", "#ef4444")
+      .attr("stroke-width", 2)
+      .attr("fill", "none");
+
+    const xAxis = d3.axisBottom(x).ticks(6).tickSizeOuter(0);
+    svg
+      .append("g")
+      .attr("transform", `translate(0, ${height - margin.bottom})`)
+      .call(xAxis)
+      .selectAll("text")
+      .attr("fill", "#e0e6f0");
+
+    svg
+      .append("text")
+      .attr("x", width / 2)
+      .attr("y", height - 10)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#e0e6f0")
+      .text("Price (USDT)");
+
+    const yAxis = d3.axisLeft(y).ticks(6).tickSizeOuter(0);
+    svg
+      .append("g")
+      .attr("transform", `translate(${margin.left}, 0)`)
+      .call(yAxis)
+      .selectAll("text")
+      .attr("fill", "#e0e6f0");
+
+    svg
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("x", -height / 2)
+      .attr("y", margin.left - 40)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#e0e6f0")
+      .text("Cumulative Volume");
+
+    svg
+      .append("line")
+      .attr("x1", x(price))
+      .attr("x2", x(price))
+      .attr("y1", margin.top)
+      .attr("y2", height - margin.bottom)
+      .attr("stroke", "#facc15")
+      .attr("stroke-width", 2)
+      .attr("stroke-dasharray", "4,4");
+
+    svg
+      .append("text")
+      .attr("x", x(price))
+      .attr("y", margin.top - 5)
+      .attr("text-anchor", "middle")
+      .attr("fill", "#facc15")
+      .text(`Price ${price.toFixed(2)}`);
+
+    svg
+      .append("circle")
+      .attr("cx", x(price))
+      .attr("cy", baseline)
+      .attr("r", 6)
+      .attr("fill", statusColor);
+  };
+
+  useEffect(() => {
+    const color =
+      data.manipulation > 0.2
+        ? "#ef4444"
+        : data.manipulation > 0.05
+        ? "#facc15"
+        : "#22c55e";
+    drawChart(data.bids, data.asks, data.priceLast, color);
+  }, [data]);
 
   return (
-    <Card className=" dark:bg-gray-900 bg-white text-gray-800 dark:text-gray-200 border-none shadow-lg rounded-lg p-4 flex flex-col">
-      <CardHeader className="p-0 mb-2">
-        <CardTitle className="text-md text-center text-yellow-500">
-          Price {currentPrice}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="h-full p-0">
-        <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={depthData}>
-            <XAxis
-              dataKey="price"
-              stroke="#9CA3AF"
-              tickFormatter={(tick) => tick.toString().replace(/^104/, "104,")}
-            />
-            <YAxis stroke="#9CA3AF" />
-
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#1F2937",
-                borderColor: "#4B5563",
-                borderRadius: "8px",
-              }}
-              itemStyle={{ color: "#FBBF24" }}
-              labelStyle={{ color: "#FDE68A" }}
-              formatter={(value: number) => Math.round(value * 100) / 100}
-            />
-
-            <ReferenceLine x={currentPrice} stroke="#facc15" strokeDasharray="3 3" />
-
-            {/* Buy Line */}
-            <Line
-              type="monotone"
-              dataKey="buyCumulative"
-              stroke="#34D399"
-              strokeWidth={3}
-              dot={false}
-            />
-            {/* Sell Line */}
-            <Line
-              type="monotone"
-              dataKey="sellCumulative"
-              stroke="#F87171"
-              strokeWidth={3}
-              dot={false}
-            />
-
-            {/* Buy Vol Bars */}
-            <Bar dataKey="buyVolume" fill="#10B981" barSize={4} />
-            {/* Sell Vol Bars */}
-            <Bar dataKey="sellVolume" fill="#EF4444" barSize={4} />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
+    <div className="grid grid-cols-3 h-screen bg-gray-900 text-gray-100">
+      <div className="col-span-2 p-4">
+        <h2 className="text-xl font-semibold mb-2">Bid/Ask Depth (Demo)</h2>
+        <p className="text-sm text-gray-400 mb-4">
+          Cumulative Volume vs Price (simulated data)
+        </p>
+        <svg
+          ref={svgRef}
+          className="w-full h-full bg-gray-800 rounded-lg shadow"
+        />
+      </div>
+      <div className="col-span-1 p-4 flex flex-col items-center">
+        <div className="w-full bg-gray-800 rounded-lg shadow p-4 mb-4">
+          <h3 className="text-lg font-semibold mb-2">Metrics</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span>Imbalance:</span>
+              <span>{data.imbalance.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Spoof Score:</span>
+              <span>{data.spoof_score.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Manipulation:</span>
+              <span>{data.manipulation.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Price:</span>
+              <span>{data.priceLast.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+        <button
+          onClick={() => setData(generateSimulatedData())}
+          className="mt-4 px-4 py-2 bg-blue-600 rounded hover:bg-blue-500"
+        >
+          Regenerate Data
+        </button>
+      </div>
+    </div>
   );
-}
+};
+
+export default PriceOverviewChart;

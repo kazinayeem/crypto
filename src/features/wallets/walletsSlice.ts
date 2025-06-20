@@ -95,7 +95,9 @@ export const fetchBybitWalletData = createAsyncThunk(
           change24hrs: market.change24hrs || 0,
           iconUrl:
             market.iconUrl ||
-            `https://placehold.co/24x24/CCCCCC/FFFFFF?text=${market.ticker?.[0] || "N"}`,
+            `https://placehold.co/24x24/CCCCCC/FFFFFF?text=${
+              market.ticker?.[0] || "N"
+            }`,
         }));
       }
 
@@ -108,7 +110,9 @@ export const fetchBybitWalletData = createAsyncThunk(
           avgCost: 0,
           pnl: 0,
           pnlPercentage: 0,
-          iconUrl: `https://placehold.co/24x24/CCCCCC/FFFFFF?text=${coinInfo.coin?.[0] || "N"}`,
+          iconUrl: `https://placehold.co/24x24/CCCCCC/FFFFFF?text=${
+            coinInfo.coin?.[0] || "N"
+          }`,
         })
       );
 
@@ -139,7 +143,14 @@ export const fetchBybitWalletData = createAsyncThunk(
 const walletsSlice = createSlice({
   name: "wallets",
   initialState,
-  reducers: {},
+  reducers: {
+    updateChartSymbol: (state, action: PayloadAction<string>) => {
+      const index = state.wallets.findIndex((w) => w.id === "bybit");
+      if (index !== -1) {
+        state.wallets[index].chartSymbol = action.payload;
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchBybitWalletData.pending, (state) => {

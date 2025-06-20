@@ -1,9 +1,10 @@
-// src/WalletItem.tsx
+// src/WalletList.tsx
 import React, { useRef, useEffect, useState } from "react";
 import { MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "./ui/button"; // Import Button from shadcn/ui
+import { Button } from "./ui/button";
 import type { WalletData } from "@/wallets";
+import { ApiCredentialsModal } from "./ApiCredentialsModal"; // Modal for API credentials
 
 interface WalletItemProps {
   icon: React.ReactNode;
@@ -24,8 +25,8 @@ export const WalletItem: React.FC<WalletItemProps> = ({
   loading = false,
   error = null,
 }) => {
-  const activeClasses = "bg-yellow-800 text-yellow-200"; // Styles for active wallet
-  const inactiveClasses = "text-gray-100"; // Styles for inactive wallet
+  const activeClasses = "bg-yellow-800 text-yellow-200";
+  const inactiveClasses = "text-gray-100";
 
   const baseClass = `rounded-lg cursor-pointer select-none p-3 ${
     isActive ? activeClasses : inactiveClasses
@@ -41,19 +42,19 @@ export const WalletItem: React.FC<WalletItemProps> = ({
       className={`flex flex-col items-center justify-center min-w-[140px] min-h-[100px] mx-2 ${baseClass}`}
     >
       <div className="mb-2">{icon}</div>
-      <span className="truncate text-center">
+      <span className="truncate text-center text-sm font-semibold">
         {name}
         {loading && " (Loading...)"}
         {error && " (Error)"}
       </span>
       <MoreVertical
         size={16}
-        className="mt-2 text-gray-400 hover:text-gray-300"
-        onClick={(e) => e.stopPropagation()} // Prevent click from bubbling to parent div
+        className="mt-2 text-gray-400 hover:text-gray-300 cursor-pointer"
+        onClick={(e) => e.stopPropagation()}
+        aria-label="More options"
       />
     </motion.div>
   ) : (
-    // Desktop view rendering (horizontal layout with hover/tap animations)
     <motion.li
       onClick={onClick}
       whileHover={{
@@ -64,13 +65,17 @@ export const WalletItem: React.FC<WalletItemProps> = ({
     >
       <div className="flex items-center space-x-3 overflow-hidden">
         {icon}
-        <span className="truncate max-w-[120px] sm:max-w-none">
+        <span className="truncate max-w-[120px] sm:max-w-none font-semibold">
           {name}
           {loading && " (Loading...)"}
           {error && " (Error)"}
         </span>
       </div>
-      <MoreVertical size={16} className="text-gray-400 hover:text-gray-300" />
+      <MoreVertical
+        size={16}
+        className="text-gray-400 hover:text-gray-300 cursor-pointer"
+        aria-label="More options"
+      />
     </motion.li>
   );
 };
@@ -88,11 +93,12 @@ export const WalletList: React.FC<WalletListProps> = ({
   handleWalletClick,
   isMobileView,
 }) => {
-  const scrollRef = useRef<HTMLDivElement>(null); // Ref for the scrollable container
-  const [canScrollLeft, setCanScrollLeft] = useState(false); // State to control left scroll button visibility
-  const [canScrollRight, setCanScrollRight] = useState(false); // State to control right scroll button visibility
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
-  // Function to check scrollability and update button visibility.
   const checkScroll = () => {
     const el = scrollRef.current;
     if (el) {
@@ -102,36 +108,47 @@ export const WalletList: React.FC<WalletListProps> = ({
   };
 
   useEffect(() => {
-    // Add event listeners for scroll and resize to update scroll buttons.
-    checkScroll(); // Initial check
+    checkScroll();
     const el = scrollRef.current;
     if (!el) return;
 
     el.addEventListener("scroll", checkScroll);
     window.addEventListener("resize", checkScroll);
 
-    // Cleanup function to remove event listeners.
     return () => {
       el.removeEventListener("scroll", checkScroll);
       window.removeEventListener("resize", checkScroll);
     };
-  }, [wallets]); // Re-run effect when wallets data changes (e.g., Bybit data loads)
+  }, [wallets]);
 
-  // Scrolls the container left by a fixed amount.
   const scrollLeft = () => {
     scrollRef.current?.scrollBy({ left: -150, behavior: "smooth" });
   };
 
-  // Scrolls the container right by a fixed amount.
   const scrollRight = () => {
     scrollRef.current?.scrollBy({ left: 150, behavior: "smooth" });
   };
 
+  const handleConnectWalletClick = () => {
+    setIsModalOpen(true);
+    setApiError(null);
+  };
+
+  const handleModalSubmit = (apiKey: string, secretKey: string) => {
+    if (apiKey === "correct_api_key" && secretKey === "correct_secret_key") {
+      alert("API Keys submitted successfully!");
+      setIsModalOpen(false);
+      setApiError(null);
+    } else {
+      setApiError("Your API is wrong, please check again");
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
-      {/* Desktop View: Vertical list of wallets */}
+      {/* Desktop/Tablet vertical wallet list */}
       {!isMobileView && (
-        <ul className="flex flex-col space-y-2 overflow-y-auto custom-scrollbar-hidden">
+        <ul className="flex flex-col space-y-2 overflow-y-auto custom-scrollbar-hidden max-h-[70vh]">
           {wallets.map((wallet) => (
             <WalletItem
               key={wallet.id}
@@ -139,20 +156,20 @@ export const WalletList: React.FC<WalletListProps> = ({
               name={wallet.name}
               isActive={selectedWallet?.id === wallet.id}
               onClick={() => handleWalletClick(wallet)}
-              loading={wallet.loading} // Pass loading state
-              error={wallet.error} // Pass error state
+              loading={wallet.loading}
+              error={wallet.error}
             />
           ))}
         </ul>
       )}
 
-      {/* Mobile View: Horizontal scrollable list with navigation buttons */}
+      {/* Mobile horizontal scroll wallet list */}
       {isMobileView && (
         <div className="relative w-full mt-4">
           {canScrollLeft && (
             <button
               onClick={scrollLeft}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-black rounded-full shadow-md"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-black rounded-full shadow-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
               aria-label="Scroll left"
             >
               <ChevronLeft size={20} />
@@ -163,8 +180,8 @@ export const WalletList: React.FC<WalletListProps> = ({
             ref={scrollRef}
             className="flex space-x-2 overflow-x-auto px-10 scroll-smooth custom-scrollbar-hidden"
             style={{
-              scrollSnapType: "x mandatory", // Enables snap-to-item scrolling
-              WebkitOverflowScrolling: "touch", // Improves scrolling performance on iOS
+              scrollSnapType: "x mandatory",
+              WebkitOverflowScrolling: "touch",
             }}
           >
             {wallets.map((wallet) => (
@@ -174,7 +191,7 @@ export const WalletList: React.FC<WalletListProps> = ({
                 name={wallet.name}
                 isActive={selectedWallet?.id === wallet.id}
                 onClick={() => handleWalletClick(wallet)}
-                isMobileView // Pass mobile view prop to WalletItem
+                isMobileView
                 loading={wallet.loading}
                 error={wallet.error}
               />
@@ -184,7 +201,7 @@ export const WalletList: React.FC<WalletListProps> = ({
           {canScrollRight && (
             <button
               onClick={scrollRight}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-black rounded-full shadow-md"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 p-2 bg-white text-black rounded-full shadow-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-400"
               aria-label="Scroll right"
             >
               <ChevronRight size={20} />
@@ -192,12 +209,23 @@ export const WalletList: React.FC<WalletListProps> = ({
           )}
         </div>
       )}
+
+      {/* Connect Wallet button */}
       <Button
         variant="outline"
-        className="mt-6 w-full border-[#FFD700] text-[#FFD700] hover:bg-[#FFD700] hover:text-[#191919]"
+        className="mt-6 w-full border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-colors"
+        onClick={handleConnectWalletClick}
       >
         + Connect Wallet
       </Button>
+
+      {/* Modal for API credentials */}
+      <ApiCredentialsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleModalSubmit}
+        error={apiError}
+      />
     </div>
   );
 };
