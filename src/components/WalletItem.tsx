@@ -1,4 +1,3 @@
-// src/WalletList.tsx
 import React, { useRef, useEffect, useState } from "react";
 import { MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -25,8 +24,8 @@ export const WalletItem: React.FC<WalletItemProps> = ({
   loading = false,
   error = null,
 }) => {
-  const activeClasses = "bg-yellow-800 text-yellow-200";
-  const inactiveClasses = "text-gray-100";
+  const activeClasses = "bg-yellow-800 text-yellow-200 border-yellow-400";
+  const inactiveClasses = "text-gray-100 border-white border opacity-50";
 
   const baseClass = `rounded-lg cursor-pointer select-none p-3 ${
     isActive ? activeClasses : inactiveClasses
@@ -37,28 +36,32 @@ export const WalletItem: React.FC<WalletItemProps> = ({
       onClick={onClick}
       whileHover={{
         backgroundColor: isActive ? "#78350f" : "#2a2a2a",
+        borderColor: isActive ? "#F59E0B" : "#FFFFFF", // Hover border color
       }}
       whileTap={{ scale: 0.97 }}
-      className={`flex flex-col items-center justify-center min-w-[140px] min-h-[100px] mx-2 ${baseClass}`}
+      className={`relative flex flex-col items-center justify-center min-w-[140px] min-h-[100px] mx-2 ${baseClass}`}
     >
+      <div className="absolute top-2 right-2">
+        <MoreVertical
+          size={16}
+          className="text-gray-400 hover:text-gray-300 cursor-pointer"
+          onClick={(e) => e.stopPropagation()}
+          aria-label="More options"
+        />
+      </div>
       <div className="mb-2">{icon}</div>
       <span className="truncate text-center text-sm font-semibold">
         {name}
         {loading && " (Loading...)"}
         {error && " (Error)"}
       </span>
-      <MoreVertical
-        size={16}
-        className="mt-2 text-gray-400 hover:text-gray-300 cursor-pointer"
-        onClick={(e) => e.stopPropagation()}
-        aria-label="More options"
-      />
     </motion.div>
   ) : (
     <motion.li
       onClick={onClick}
       whileHover={{
         backgroundColor: isActive ? "#78350f" : "#2a2a2a",
+        borderColor: isActive ? "#F59E0B" : "#FFFFFF", // Hover border color
       }}
       whileTap={{ scale: 0.97 }}
       className={`flex items-center justify-between space-x-3 p-3 ${baseClass}`}
@@ -196,6 +199,21 @@ export const WalletList: React.FC<WalletListProps> = ({
                 error={wallet.error}
               />
             ))}
+
+            {/* + Connect Wallet Button styled as a WalletItem for mobile */}
+            <motion.div
+              onClick={handleConnectWalletClick}
+              whileHover={{
+                backgroundColor: "#2a2a2a",
+              }}
+              whileTap={{ scale: 0.97 }}
+              className="flex flex-col items-center justify-center min-w-[140px] min-h-[100px] mx-2 rounded-lg cursor-pointer select-none p-3 text-gray-100 border border-white opacity-50" // Added border-white and opacity
+            >
+              <div className="mb-2 text-3xl">+</div>
+              <span className="truncate text-center text-sm font-semibold">
+                Connect Wallet
+              </span>
+            </motion.div>
           </div>
 
           {canScrollRight && (
@@ -210,14 +228,16 @@ export const WalletList: React.FC<WalletListProps> = ({
         </div>
       )}
 
-      {/* Connect Wallet button */}
-      <Button
-        variant="outline"
-        className="mt-6 w-full border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-colors"
-        onClick={handleConnectWalletClick}
-      >
-        + Connect Wallet
-      </Button>
+      {/* Connect Wallet button for Desktop/Tablet */}
+      {!isMobileView && (
+        <Button
+          variant="outline"
+          className="mt-6 w-full border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-colors"
+          onClick={handleConnectWalletClick}
+        >
+          + Connect Wallet
+        </Button>
+      )}
 
       {/* Modal for API credentials */}
       <ApiCredentialsModal

@@ -41,8 +41,10 @@ const ChatMessage: React.FC<MessageProps> = ({ sender, text }) => {
 
   return (
     <div
-      className={`flex items-start mb-4 gap-2 ${
-        sender === "user" ? "justify-end flex-row-reverse" : "justify-start"
+      className={`flex mb-4 gap-2 max-w-full ${
+        sender === "user"
+          ? "justify-end flex-row-reverse"
+          : "justify-start flex-row"
       }`}
     >
       <div
@@ -55,7 +57,7 @@ const ChatMessage: React.FC<MessageProps> = ({ sender, text }) => {
         {text}
         <Avatar
           className={`absolute bottom-0 ${
-            sender === "agent" ? "-right-5" : "-left-5"
+            sender === "agent" ? "-left-6" : "-right-6"
           } border-2 border-[#191919] z-10`}
         >
           <AvatarFallback
@@ -114,15 +116,9 @@ export default function FullScreenChat() {
   ];
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-[#0f0f23] to-[#1e1e2f]  flex justify-center font-sans">
-      <Card
-        className="w-full md:w-[380px] h-[90vh] text-gray-100 border border-[#333] shadow-lg rounded-xl flex flex-col overflow-hidden"
-        style={{
-          background: "#191919",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
-        }}
-      >
-        <CardHeader className="pb-2 border-b border-[#333]">
+    <div className="min-h-screen w-full  flex justify-center font-sans">
+      <Card className="w-full md:w-[380px] h-[90vh] text-gray-100 rounded-2xl p-5 shadow-xl border border-white/10 flex flex-col overflow-hidden bg-transparent">
+        <CardHeader className="pb-2 border-b border-white/10">
           <CardTitle className="text-lg sm:text-xl font-semibold text-yellow-400">
             Your Agent
           </CardTitle>
@@ -137,18 +133,20 @@ export default function FullScreenChat() {
               avatarFallback={msg.avatarFallback}
             />
           ))}
+
           <div className="flex justify-center my-4">
-            <div className="bg-[#393b78] text-gray-300 text-sm py-2 px-4 rounded-full max-w-[80%] text-center border border-[#333]">
+            <div className="bg-[#393b78] text-gray-300 text-sm py-2 px-4 rounded-full max-w-[80%] text-center border border-white/10">
               That's all for now!{" "}
               <span className="underline underline-offset-2 text-white">
                 Upgrade to continue chatting with your AI assistant.
               </span>
             </div>
           </div>
+
           <div ref={messagesEndRef} />
         </CardContent>
 
-        <div className="p-3 border-t border-[#333] flex items-center gap-2 bg-transparent flex-wrap">
+        <div className="p-3 border-t border-white/10 flex items-center gap-2 bg-transparent flex-wrap">
           <Button
             variant="ghost"
             size="icon"
@@ -180,30 +178,6 @@ export default function FullScreenChat() {
             <Send size={20} />
           </Button>
         </div>
-
-        <style>{`
-          .custom-scrollbar::-webkit-scrollbar {
-            width: 0px;
-            height: 0px;
-          }
-          .custom-scrollbar {
-            scrollbar-width: none;
-          }
-          @media (hover: hover) and (pointer: fine) {
-            .custom-scrollbar:hover::-webkit-scrollbar {
-              width: 8px;
-              height: 8px;
-            }
-            .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-              background: #555;
-              border-radius: 10px;
-            }
-            .custom-scrollbar:hover::-webkit-scrollbar-track {
-              background: #292a55;
-              border-radius: 10px;
-            }
-          }
-        `}</style>
       </Card>
     </div>
   );

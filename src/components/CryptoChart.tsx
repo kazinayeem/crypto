@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/store"; // Adjust if needed
 import { fetchBybitWalletData } from "@/features/wallets/walletsSlice"; // Adjust if needed
 
-
 export function CryptoChart() {
   const containerRef = useRef<HTMLDivElement>(null);
   const scriptRef = useRef<HTMLScriptElement | null>(null);
@@ -70,10 +69,10 @@ export function CryptoChart() {
       trendLineColor: "#f6e05e",
       underLineColor: "rgba(246, 224, 94, 0.2)",
       underLineBottomColor: "rgba(246, 224, 94, 0)",
-      isTransparent: false, // Set to true to remove background & border
+      isTransparent: true,
       autosize: true,
       chartOnly: false,
-      borderVisible: false, // Make sure this is false to hide widget border
+      borderVisible: false,
       showVolume: false,
       hideDateRanges: true,
       scalePosition: "none",
@@ -104,14 +103,8 @@ export function CryptoChart() {
     walletLoading && dynamicSymbolOptions.length === 0;
 
   return (
-    <Card
-      className="w-full h-full text-white rounded-2xl shadow-xl border border-white/10"
-      style={{
-        background:
-          "linear-gradient(to bottom, #191919 0%, #191919 80%, #27274b 100%)",
-      }}
-    >
-      <CardHeader className="px-4 pt-6 pb-0">
+    <Card className="w-full h-full text-white rounded-2xl shadow-xl border border-white/10 bg-transparent">
+      <CardHeader className="px-2 pt-0 pb-0">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <CardTitle className="text-lg font-semibold">Chart</CardTitle>
 
@@ -146,7 +139,7 @@ export function CryptoChart() {
       </CardHeader>
 
       <hr
-        className="my-2"
+        className=""
         style={{
           background:
             "linear-gradient(to right, transparent, #27274b, transparent)",
@@ -155,7 +148,7 @@ export function CryptoChart() {
         }}
       />
 
-      <CardContent className="px-4 pt-2">
+      <CardContent className="">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-4 gap-x-8">
           <div>
             <div className="text-3xl font-bold text-yellow-400">
@@ -221,7 +214,7 @@ export function CryptoChart() {
       </CardContent>
 
       {/* Chart area - no border */}
-      <CardContent className="pt-4 px-4 pb-6 flex-1 overflow-hidden">
+      <CardContent className=" px-4 pb-6 flex-1 overflow-hidden">
         <div
           ref={containerRef}
           className="w-full h-[250px] sm:h-[300px] lg:h-[100%]"

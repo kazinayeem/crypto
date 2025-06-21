@@ -6,10 +6,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export function Header() {
   // Get logged-in user info from Redux store
-  const user = useSelector((state: RootState) => state.user.users[0]); // adjust as per your user slice
+  const user = useSelector((state: RootState) => state.user.users[0]);
 
   return (
-    <header className="flex items-center justify-between p-4 mb-2 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 transition-colors">
+    <header className="flex items-center justify-between p-4 mb-2     transition-colors">
       <div className="flex items-center space-x-2">
         <span className="text-2xl font-bold text-yellow-500 dark:text-yellow-300">
           Bee

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
 import { TotalBalanceSection } from "./TotalBalanceSection";
 import { WalletDetailSection } from "./WalletDetailSection";
@@ -80,14 +79,8 @@ export function PortfolioDashboard() {
   const direction = activeView === "detail" ? 1 : -1;
 
   return (
-    <div className="flex items-center justify-center w-full h-full font-sans">
-      <Card
-        className="w-full h-full text-gray-100 border border-[#333] shadow-lg rounded-lg p-4 flex flex-col relative overflow-hidden custom-scrollbar"
-        style={{
-          background:
-            "linear-gradient(to bottom, #191919 0%, #191919 80%, #27274b 100%)",
-        }}
-      >
+    <div className="flex items-center justify-center w-full h-full font-sans rounded-2xl shadow-xl border border-white/10">
+      <div className="w-full h-full text-gray-100  border-white  p-4 flex flex-col relative overflow-hidden custom-scrollbar bg-transparent">
         <AnimatePresence initial={false} custom={direction}>
           {activeView === "list" && (
             <motion.div
@@ -177,7 +170,7 @@ export function PortfolioDashboard() {
             }
           }
         `}</style>
-      </Card>
+      </div>
     </div>
   );
 }

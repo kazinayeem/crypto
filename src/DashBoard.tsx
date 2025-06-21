@@ -23,7 +23,26 @@ function DashBoard() {
 
   if (isMobile) {
     return (
-      <div className="min-h-screen bg-background text-foreground font-sans relative">
+      <div
+        style={{
+          backgroundImage: `linear-gradient(
+      305deg,
+      hsl(0deg 0% 10%) 0%,
+      hsl(250deg 22% 17%) 7%,
+      hsl(247deg 32% 25%) 15%,
+      hsl(244deg 37% 32%) 23%,
+      hsl(242deg 41% 41%) 31%,
+      hsl(240deg 44% 49%) 40%,
+      hsl(240deg 44% 49%) 49%,
+      hsl(242deg 41% 41%) 58%,
+      hsl(244deg 37% 32%) 67%,
+      hsl(247deg 32% 25%) 78%,
+      hsl(250deg 22% 17%) 88%,
+      hsl(0deg 0% 10%) 100%
+    )`,
+        }}
+        className="min-h-screen  text-foreground font-sans relative p-4 gap-4 flex flex-col bg-background"
+      >
         <Header />
         <PortfolioDashboard />
         <PriceOverviewChart />
@@ -43,9 +62,23 @@ function DashBoard() {
               <FullScreenChat />
               <button
                 onClick={toggleChat}
-                className="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700 p-2 rounded"
+                className="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700 p-2 rounded-full shadow-md"
+                aria-label="Close chat"
               >
-                Close
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
               </button>
             </div>
           </div>
@@ -56,13 +89,34 @@ function DashBoard() {
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <div className="flex flex-col min-h-screen bg-background text-foreground font-sans">
+      <div
+        style={{
+          backgroundImage: `linear-gradient(
+      305deg,
+      hsl(0deg 0% 10%) 0%,
+      hsl(250deg 22% 17%) 7%,
+      hsl(247deg 32% 25%) 15%,
+      hsl(244deg 37% 32%) 23%,
+      hsl(242deg 41% 41%) 31%,
+      hsl(240deg 44% 49%) 40%,
+      hsl(240deg 44% 49%) 49%,
+      hsl(242deg 41% 41%) 58%,
+      hsl(244deg 37% 32%) 67%,
+      hsl(247deg 32% 25%) 78%,
+      hsl(250deg 22% 17%) 88%,
+      hsl(0deg 0% 10%) 100%
+    )`,
+        }}
+        className="flex flex-col min-h-screen  text-foreground font-sans"
+      >
         <Header />
         {/* <LiveKitVideoCall /> */}
         <main className="flex-grow flex flex-col p-4 pt-0">
           <div className="flex flex-grow gap-4 overflow-hidden">
-            {/* Left column */}
-            <div className="w-1/4 flex flex-col gap-4 overflow-hidden">
+            <div
+              className="flex flex-col gap-4 overflow-hidden"
+              style={{ flexBasis: "30%" }}
+            >
               <div className="flex-1 min-h-0 overflow-auto">
                 <PortfolioDashboard />
               </div>
@@ -71,8 +125,11 @@ function DashBoard() {
               </div>
             </div>
 
-            {/* Middle column */}
-            <div className="w-1/2 flex flex-col gap-4 overflow-hidden">
+            {/* Middle column - 36.78% */}
+            <div
+              className="flex flex-col gap-4 overflow-hidden"
+              style={{ flexBasis: "45%" }}
+            >
               <div className="flex-1 min-h-0 overflow-auto">
                 <CryptoChart />
               </div>
@@ -81,8 +138,11 @@ function DashBoard() {
               </div>
             </div>
 
-            {/* Right column */}
-            <div className="w-1/4 flex-1 min-h-0 overflow-auto">
+            {/* Right column - 26.61% */}
+            <div
+              className="flex-1 min-h-0 overflow-auto"
+              style={{ flexBasis: "26.61%" }}
+            >
               <FullScreenChat />
             </div>
           </div>

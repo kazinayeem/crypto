@@ -56,9 +56,9 @@ const PriceOverviewChart: React.FC = () => {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const width = svgRef.current?.clientWidth || 600;
-    const height = svgRef.current?.clientHeight || 400;
-    const margin = { top: 20, right: 40, bottom: 50, left: 60 };
+    const width = svgRef.current?.clientWidth || 400;
+    const height = svgRef.current?.clientHeight || 250;
+    const margin = { top: 10, right: 30, bottom: 30, left: 40 };
 
     let cumB: any[] = [],
       cumA: any[] = [],
@@ -83,11 +83,11 @@ const PriceOverviewChart: React.FC = () => {
       .domain([0, d3.max([...cumB, ...cumA], (d) => d.v) || 1])
       .range([height - margin.bottom, margin.top]);
 
-    const barWidth = 4;
+    const barWidth = 2;
     const volScale = d3
       .scaleLinear()
       .domain([0, d3.max([...bids, ...asks], (d) => d.vol) || 1])
-      .range([0, 60]);
+      .range([0, 40]);
 
     const baseline = y(0);
 
@@ -134,38 +134,23 @@ const PriceOverviewChart: React.FC = () => {
       .attr("stroke-width", 2)
       .attr("fill", "none");
 
-    const xAxis = d3.axisBottom(x).ticks(6).tickSizeOuter(0);
+    const xAxis = d3.axisBottom(x).ticks(4).tickSizeOuter(0);
     svg
       .append("g")
       .attr("transform", `translate(0, ${height - margin.bottom})`)
       .call(xAxis)
       .selectAll("text")
-      .attr("fill", "#e0e6f0");
-
-    svg
-      .append("text")
-      .attr("x", width / 2)
-      .attr("y", height - 10)
-      .attr("text-anchor", "middle")
       .attr("fill", "#e0e6f0")
-      .text("Price (USDT)");
+      .attr("font-size", "8px");
 
-    const yAxis = d3.axisLeft(y).ticks(6).tickSizeOuter(0);
+    const yAxis = d3.axisLeft(y).ticks(4).tickSizeOuter(0);
     svg
       .append("g")
       .attr("transform", `translate(${margin.left}, 0)`)
       .call(yAxis)
       .selectAll("text")
-      .attr("fill", "#e0e6f0");
-
-    svg
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("x", -height / 2)
-      .attr("y", margin.left - 40)
-      .attr("text-anchor", "middle")
       .attr("fill", "#e0e6f0")
-      .text("Cumulative Volume");
+      .attr("font-size", "8px");
 
     svg
       .append("line")
@@ -174,22 +159,23 @@ const PriceOverviewChart: React.FC = () => {
       .attr("y1", margin.top)
       .attr("y2", height - margin.bottom)
       .attr("stroke", "#facc15")
-      .attr("stroke-width", 2)
+      .attr("stroke-width", 1.5)
       .attr("stroke-dasharray", "4,4");
 
     svg
       .append("text")
       .attr("x", x(price))
-      .attr("y", margin.top - 5)
+      .attr("y", margin.top)
       .attr("text-anchor", "middle")
       .attr("fill", "#facc15")
+      .attr("font-size", "10px")
       .text(`Price ${price.toFixed(2)}`);
 
     svg
       .append("circle")
       .attr("cx", x(price))
       .attr("cy", baseline)
-      .attr("r", 6)
+      .attr("r", 4)
       .attr("fill", statusColor);
   };
 
@@ -204,45 +190,43 @@ const PriceOverviewChart: React.FC = () => {
   }, [data]);
 
   return (
-    <div className="grid grid-cols-3 h-screen bg-gray-900 text-gray-100">
-      <div className="col-span-2 p-4">
-        <h2 className="text-xl font-semibold mb-2">Bid/Ask Depth (Demo)</h2>
-        <p className="text-sm text-gray-400 mb-4">
-          Cumulative Volume vs Price (simulated data)
-        </p>
-        <svg
-          ref={svgRef}
-          className="w-full h-full bg-gray-800 rounded-lg shadow"
-        />
-      </div>
-      <div className="col-span-1 p-4 flex flex-col items-center">
-        <div className="w-full bg-gray-800 rounded-lg shadow p-4 mb-4">
-          <h3 className="text-lg font-semibold mb-2">Metrics</h3>
-          <div className="space-y-2">
-            <div className="flex justify-between">
-              <span>Imbalance:</span>
-              <span>{data.imbalance.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Spoof Score:</span>
-              <span>{data.spoof_score.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Manipulation:</span>
-              <span>{data.manipulation.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Price:</span>
-              <span>{data.priceLast.toFixed(2)}</span>
-            </div>
-          </div>
-        </div>
+    <div className="space-y-2 text-xs bg-transparent  border border-[#333] shadow-lg rounded-lg p-4 flex flex-col relative overflow-hidden custom-scrollbar ">
+      <div className="flex items-center justify-between">
+        <span className="font-semibold text-sm">Bid/Ask Depth</span>
         <button
           onClick={() => setData(generateSimulatedData())}
-          className="mt-4 px-4 py-2 bg-blue-600 rounded hover:bg-blue-500"
+          className="px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-500"
         >
-          Regenerate Data
+          Refresh
         </button>
+      </div>
+
+      <svg
+        ref={svgRef}
+        className="w-full h-[250px]  rounded shadow"
+      />
+
+      <div className="grid grid-cols-2 gap-2  p-2 rounded shadow">
+        <div className="space-y-1">
+          <div className="flex justify-between">
+            <span>Imbalance:</span>
+            <span>{data.imbalance.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Spoof Score:</span>
+            <span>{data.spoof_score.toFixed(2)}</span>
+          </div>
+        </div>
+        <div className="space-y-1">
+          <div className="flex justify-between">
+            <span>Manipulation:</span>
+            <span>{data.manipulation.toFixed(2)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Price:</span>
+            <span>{data.priceLast.toFixed(2)}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
