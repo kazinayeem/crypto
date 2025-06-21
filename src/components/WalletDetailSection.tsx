@@ -79,26 +79,20 @@ const FuturesPositionItem: React.FC<any> = ({
   </div>
 );
 
-const TradePairItem: React.FC<any> = ({
-  ticker,
-  change24hrs,
-  iconUrl,
-  onClick,
-}) => (
+const TradePairItem: React.FC<any> = ({ ticker, change24hrs, onClick }) => (
   <div
-    className="bg-[#2a2a2a] p-3 rounded-md text-sm flex items-center space-x-2 cursor-pointer" // Add cursor-pointer for visual cue
-    onClick={onClick} // Add onClick handler
+    className="p-3 rounded-md text-sm flex items-center space-x-2 cursor-pointer"
+    onClick={onClick}
   >
-    <img
-      src={iconUrl}
-      alt={ticker}
-      className="w-5 h-5 rounded-full flex-shrink-0"
-    />
-    <p className="truncate">
-      <strong>{ticker}:</strong> {change24hrs.toFixed(2)}% (24h Change)
-    </p>
+    <div>
+      <div className="flex items-center space-x-2 mb-1">
+        <strong>{ticker}:</strong>
+      </div>
 
-    <Button className="ml-auto bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">
+      <p className="truncate">{change24hrs.toFixed(2)}% (24h Change)</p>
+    </div>
+
+    <Button className="ml-auto bg-[#454545] hover:bg-gray-600 text-white px-3 py-1 rounded">
       Trade
     </Button>
   </div>

@@ -20,7 +20,11 @@ function GaugePointer() {
   return (
     <g>
       <circle cx={cx} cy={cy} r={5} fill="red" />
-      <path d={`M ${cx} ${cy} L ${target.x} ${target.y}`} stroke="red" strokeWidth={3} />
+      <path
+        d={`M ${cx} ${cy} L ${target.x} ${target.y}`}
+        stroke="red"
+        strokeWidth={3}
+      />
     </g>
   );
 }
@@ -57,17 +61,19 @@ export function FearGreedIndex() {
   return (
     <Card className="w-full border border-white/10 shadow-xl rounded-2xl bg-transparent p-4 flex flex-col overflow-hidden">
       <CardHeader className="pb-2 border-b border-white/10 bg-transparent">
-        <CardTitle className="text-sm font-semibold text-white">Fear and Greed Index</CardTitle>
+        <CardTitle className="text-sm font-semibold text-white">
+          Fear and Greed Index
+        </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-col items-center justify-center h-[300px] bg-transparent">
+      <CardContent className="flex flex-col items-center justify-center min-h-[265px] bg-transparent">
         {loading ? (
           <div className="text-sm text-muted-foreground">Loading...</div>
         ) : (
           <>
             <GaugeContainer
-              width={250}
-              height={250}
+              width={450}
+              height={200}
               startAngle={-110}
               endAngle={110}
               value={value}
@@ -83,7 +89,9 @@ export function FearGreedIndex() {
               <GaugeValueArc />
               <GaugePointer />
             </GaugeContainer>
-            <div className="text-white mt-2 text-lg font-bold">{value} – {classification}</div>
+            <div className="text-white mt-2 text-lg font-bold">
+              {value} – {classification}
+            </div>
           </>
         )}
       </CardContent>

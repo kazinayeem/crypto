@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { MoreVertical, ChevronLeft, ChevronRight } from "lucide-react";
+import { MoreVertical, ChevronLeft, ChevronRight, Wallet2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 import type { WalletData } from "@/wallets";
@@ -232,14 +232,14 @@ export const WalletList: React.FC<WalletListProps> = ({
       {!isMobileView && (
         <Button
           variant="outline"
-          className="mt-6 w-full border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-black transition-colors"
+          className="mt-6 w-full bg-transparent  transition-colors"
           onClick={handleConnectWalletClick}
         >
-          + Connect Wallet
+          <Wallet2 size={16} className="mr-2" />
+          Connect Wallet
         </Button>
       )}
 
-      {/* Modal for API credentials */}
       <ApiCredentialsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

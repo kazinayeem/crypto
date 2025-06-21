@@ -3,10 +3,10 @@ import { Header } from "./components/Header";
 import { CryptoChart } from "./components/CryptoChart";
 import { FearGreedIndex } from "./components/FearGreedIndex";
 import { PortfolioDashboard } from "./components/PortfolioDashboard";
-import FullScreenChat from "./components/YourAgent";
-import { ThemeProvider } from "./components/theme-provider";
+import FullScreenChat from "./components/Chat";
 import { MessageCircle } from "lucide-react";
 import PriceOverviewChart from "./components/PriceOverviewChart";
+import { mainbgColor } from "./lib/bgcolor";
 
 function DashBoard() {
   const [isMobile, setIsMobile] = useState(false);
@@ -25,21 +25,7 @@ function DashBoard() {
     return (
       <div
         style={{
-          backgroundImage: `linear-gradient(
-      305deg,
-      hsl(0deg 0% 10%) 0%,
-      hsl(250deg 22% 17%) 7%,
-      hsl(247deg 32% 25%) 15%,
-      hsl(244deg 37% 32%) 23%,
-      hsl(242deg 41% 41%) 31%,
-      hsl(240deg 44% 49%) 40%,
-      hsl(240deg 44% 49%) 49%,
-      hsl(242deg 41% 41%) 58%,
-      hsl(244deg 37% 32%) 67%,
-      hsl(247deg 32% 25%) 78%,
-      hsl(250deg 22% 17%) 88%,
-      hsl(0deg 0% 10%) 100%
-    )`,
+          backgroundImage: `${mainbgColor}`,
         }}
         className="min-h-screen  text-foreground font-sans relative p-4 gap-4 flex flex-col bg-background"
       >
@@ -58,11 +44,16 @@ function DashBoard() {
 
         {showChat && (
           <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
-            <div className="relative w-full h-full p-4 bg-background">
+            <div
+              style={{
+                backgroundImage: `${mainbgColor}`,
+              }}
+              className="relative w-full h-full p-4"
+            >
               <FullScreenChat />
               <button
                 onClick={toggleChat}
-                className="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700 p-2 rounded-full shadow-md"
+                className="absolute top-2 right-2 text-white bg-red-600 hover:bg-red-700 p-2 rounded-full shadow-md"
                 aria-label="Close chat"
               >
                 <svg
@@ -88,67 +79,50 @@ function DashBoard() {
   }
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <div
-        style={{
-          backgroundImage: `linear-gradient(
-      305deg,
-      hsl(0deg 0% 10%) 0%,
-      hsl(250deg 22% 17%) 7%,
-      hsl(247deg 32% 25%) 15%,
-      hsl(244deg 37% 32%) 23%,
-      hsl(242deg 41% 41%) 31%,
-      hsl(240deg 44% 49%) 40%,
-      hsl(240deg 44% 49%) 49%,
-      hsl(242deg 41% 41%) 58%,
-      hsl(244deg 37% 32%) 67%,
-      hsl(247deg 32% 25%) 78%,
-      hsl(250deg 22% 17%) 88%,
-      hsl(0deg 0% 10%) 100%
-    )`,
-        }}
-        className="flex flex-col min-h-screen  text-foreground font-sans"
-      >
-        <Header />
-        {/* <LiveKitVideoCall /> */}
-        <main className="flex-grow flex flex-col p-4 pt-0">
-          <div className="flex flex-grow gap-4 overflow-hidden">
-            <div
-              className="flex flex-col gap-4 overflow-hidden"
-              style={{ flexBasis: "30%" }}
-            >
-              <div className="flex-1 min-h-0 overflow-auto">
-                <PortfolioDashboard />
-              </div>
-              <div className="flex-1 min-h-0 overflow-auto">
-                <PriceOverviewChart />
-              </div>
+    <div
+      style={{
+        backgroundImage: `${mainbgColor}`,
+      }}
+      className="flex flex-col min-h-screen  text-foreground font-sans"
+    >
+      <Header />
+      {/* <LiveKitVideoCall /> */}
+      <main className="flex-grow flex flex-col p-4 pt-0">
+        <div className="flex flex-grow gap-4 overflow-hidden">
+          <div
+            className="flex flex-col gap-4 overflow-hidden"
+            style={{ flexBasis: "30%" }}
+          >
+            <div className="flex-1 min-h-0 overflow-auto h-auto">
+              <PortfolioDashboard />
             </div>
-
-            {/* Middle column - 36.78% */}
-            <div
-              className="flex flex-col gap-4 overflow-hidden"
-              style={{ flexBasis: "45%" }}
-            >
-              <div className="flex-1 min-h-0 overflow-auto">
-                <CryptoChart />
-              </div>
-              <div className="flex-1 min-h-0 overflow-auto">
-                <FearGreedIndex />
-              </div>
-            </div>
-
-            {/* Right column - 26.61% */}
-            <div
-              className="flex-1 min-h-0 overflow-auto"
-              style={{ flexBasis: "26.61%" }}
-            >
-              <FullScreenChat />
+            <div className="flex-1 min-h-0 overflow-auto">
+              <PriceOverviewChart />
             </div>
           </div>
-        </main>
-      </div>
-    </ThemeProvider>
+
+          {/* Middle column - 36.78% */}
+          <div
+            className="flex flex-col gap-4 overflow-hidden"
+            style={{ flexBasis: "45%" }}
+          >
+            <div className="flex-1 min-h-0 overflow-auto">
+              <CryptoChart />
+            </div>
+            <div className="flex-1 min-h-0 overflow-auto">
+              <FearGreedIndex />
+            </div>
+          </div>
+
+          <div
+            className="flex-1 min-h-0 overflow-auto"
+            style={{ flexBasis: "26.61%" }}
+          >
+            <FullScreenChat />
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }
 
