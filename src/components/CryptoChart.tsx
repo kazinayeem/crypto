@@ -2,14 +2,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
-import type { RootState } from "@/store"; // Adjust if needed
-import { fetchBybitWalletData } from "@/features/wallets/walletsSlice"; // Adjust if needed
+import type { RootState } from "@/store";
+import { fetchBybitWalletData } from "@/features/wallets/walletsSlice";
+
+const intervalMap: Record<string, string> = {
+  "1 hr": "60",
+  "3 hr": "180",
+  "1 d": "D",
+  "1 wk": "W",
+};
 
 export function CryptoChart() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const scriptRef = useRef<HTMLScriptElement | null>(null);
-
-  const [symbol, setSymbol] = useState("BINANCE:BTCUSDT");
+  const [symbol, setSymbol] = useState("NASDAQ:AAPL");
+  const [interval, setInterval] = useState("D");
   const [currency, setCurrency] = useState("USD");
   const [showSymbolDropdown, setShowSymbolDropdown] = useState(false);
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
@@ -32,7 +38,7 @@ export function CryptoChart() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (bybitWallet?.tradePairs && bybitWallet.tradePairs.length > 0) {
+    if (bybitWallet?.tradePairs?.length) {
       const options = bybitWallet.tradePairs.map((pair) => ({
         label: pair.ticker,
         value: `BINANCE:${pair.ticker.replace("/", "")}`,
@@ -43,56 +49,50 @@ export function CryptoChart() {
         setSymbol(options[0].value);
       }
     }
-  }, [bybitWallet?.tradePairs, symbol]);
+  }, [bybitWallet?.tradePairs]);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !symbol) return;
+    if (!container || !symbol || !interval) return;
 
-    if (scriptRef.current && container.contains(scriptRef.current)) {
-      container.removeChild(scriptRef.current);
-      scriptRef.current = null;
-    }
+    container.innerHTML = "";
 
     const script = document.createElement("script");
     script.src =
-      "https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js";
+      "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    script.type = "text/javascript";
     script.async = true;
-
-    const config = {
-      symbol,
-      width: "100%",
-      height: "100%",
-      locale: "en",
-      dateRange: "12M",
-      colorTheme: "dark",
-      trendLineColor: "#f6e05e",
-      underLineColor: "rgba(246, 224, 94, 0.2)",
-      underLineBottomColor: "rgba(246, 224, 94, 0)",
-      isTransparent: true,
-      autosize: true,
-      chartOnly: false,
-      borderVisible: false,
-      showVolume: false,
-      hideDateRanges: true,
-      scalePosition: "none",
-    };
-
-    script.innerHTML = JSON.stringify(config);
+    script.innerHTML = `
+      {
+        "autosize": true,
+        "symbol": "${symbol}",
+        "interval": "${interval}",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "allow_symbol_change": false,
+        "support_host": "https://www.tradingview.com",
+        "hide_legend": true,
+        "hide_side_toolbar": true,
+        "hide_top_toolbar": true,
+        "hide_ideas": true,
+        "isTransparent": true,
+        "overrides": {
+            "paneProperties.backgroundGradientStartColor": "#020024",
+            "paneProperties.backgroundGradientEndColor": "#4f485e"
+        }
+      }
+    `;
 
     container.appendChild(script);
-    scriptRef.current = script;
 
     return () => {
-      if (scriptRef.current && container.contains(scriptRef.current)) {
-        container.removeChild(scriptRef.current);
-        scriptRef.current = null;
-      }
+      container.innerHTML = "";
     };
-  }, [symbol]);
+  }, [symbol, interval]);
 
   const currencyOptions = ["USD", "EUR", "GBP", "JPY"];
-
   const displayedBalance =
     bybitWallet?.balance?.toLocaleString(undefined, {
       minimumFractionDigits: 2,
@@ -108,7 +108,6 @@ export function CryptoChart() {
         <div className="flex items-center justify-between flex-wrap gap-4">
           <CardTitle className="text-lg font-semibold">Chart</CardTitle>
 
-          {/* Currency Dropdown */}
           <div className="relative">
             <button
               onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}
@@ -138,17 +137,7 @@ export function CryptoChart() {
         </div>
       </CardHeader>
 
-      <hr
-        className=""
-        style={{
-          background:
-            "linear-gradient(to right, transparent, #27274b, transparent)",
-          height: "2px",
-          border: "none",
-        }}
-      />
-
-      <CardContent className="">
+      <CardContent>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-4 gap-x-8">
           <div>
             <div className="text-3xl font-bold text-yellow-400">
@@ -201,24 +190,28 @@ export function CryptoChart() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {["1 hr", "3 hr", "1 d", "1 wk"].map((time) => (
+            {Object.keys(intervalMap).map((label) => (
               <button
-                key={time}
-                className="px-3 py-1 rounded-full text-xs border border-white/20 text-white hover:bg-white/10 transition-colors"
+                key={label}
+                onClick={() => setInterval(intervalMap[label])}
+                className={`px-3 py-1 rounded-full text-xs border ${
+                  intervalMap[label] === interval
+                    ? "bg-white/10 border-white/30"
+                    : "border-white/20"
+                } text-white hover:bg-white/10 transition-colors`}
               >
-                {time}
+                {label}
               </button>
             ))}
           </div>
         </div>
       </CardContent>
 
-      {/* Chart area - no border */}
-      <CardContent className=" px-4 pb-6 flex-1 overflow-hidden">
+      <CardContent className="px-4 pb-6 flex-1 overflow-hidden">
         <div
           ref={containerRef}
           className="w-full h-[250px] sm:h-[300px] lg:h-[100%]"
-          style={{ border: "none" }}
+          style={{ border: "none", background: "transparent" }}
         >
           {isTradePairsLoading && (
             <div className="flex items-center justify-center h-full text-gray-400">
@@ -230,7 +223,6 @@ export function CryptoChart() {
               Error loading chart: {walletError}
             </div>
           )}
-          {/* TradingView widget is injected here */}
         </div>
       </CardContent>
     </Card>

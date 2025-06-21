@@ -127,3 +127,6 @@
 .custom-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
+.tradingview-widget-container {
+  background: transparent !important;
+}
