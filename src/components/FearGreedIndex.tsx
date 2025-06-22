@@ -59,7 +59,7 @@ export function FearGreedIndex() {
   }, []);
 
   return (
-    <Card className="w-full border border-white/10 shadow-xl rounded-2xl bg-transparent p-4 flex flex-col overflow-hidden">
+    <Card className="w-full border border-white shadow-xl rounded-2xl bg-transparent p-4 flex flex-col overflow-hidden">
       <CardHeader className="pb-2 border-b border-white/10 bg-transparent">
         <CardTitle className="text-sm font-semibold text-white">
           Fear and Greed Index

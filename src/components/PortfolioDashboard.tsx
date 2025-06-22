@@ -46,7 +46,7 @@ export function PortfolioDashboard() {
   };
 
   const handleCloseTradePage = () => {
-    setActiveView("detail"); // Or "list" depending on desired flow
+    setActiveView("detail");
     setSelectedTradePair(null);
   };
 
@@ -79,7 +79,7 @@ export function PortfolioDashboard() {
   const direction = activeView === "detail" ? 1 : -1;
 
   return (
-    <div className="flex items-center justify-center w-full h-full font-sans rounded-2xl shadow-xl border border-white/10">
+    <div className="flex items-center justify-center w-full h-full font-sans rounded-2xl shadow-xl border border-white">
       <div className="w-full h-full text-gray-100  border-white  p-4 flex flex-col relative overflow-hidden custom-scrollbar bg-transparent">
         <AnimatePresence initial={false} custom={direction}>
           {activeView === "list" && (

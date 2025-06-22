@@ -1,24 +1,23 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "@/store";
 import { fetchBybitWalletData } from "@/features/wallets/walletsSlice";
 
-const intervalMap: Record<string, string> = {
-  "1 hr": "60",
-  "3 hr": "180",
-  "1 d": "D",
-  "1 wk": "W",
-};
+// const intervalMap: Record<string, string> = {
+//   "1 hr": "60",
+//   "3 hr": "180",
+//   "1 d": "D",
+//   "1 wk": "W",
+// };
 
 export function CryptoChart() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [symbol, setSymbol] = useState("NASDAQ:AAPL");
-  const [interval, setInterval] = useState("D");
-  const [currency, setCurrency] = useState("USD");
-  const [showSymbolDropdown, setShowSymbolDropdown] = useState(false);
-  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
+  const interval = useState("D");
+  // const [currency, setCurrency] = useState("USD");
+  // const [showSymbolDropdown, setShowSymbolDropdown] = useState(false);
+  // const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [dynamicSymbolOptions, setDynamicSymbolOptions] = useState<
     { label: string; value: string }[]
   >([]);
@@ -44,7 +43,6 @@ export function CryptoChart() {
         value: `BINANCE:${pair.ticker.replace("/", "")}`,
       }));
       setDynamicSymbolOptions(options);
-
       if (!options.some((opt) => opt.value === symbol)) {
         setSymbol(options[0].value);
       }
@@ -54,9 +52,7 @@ export function CryptoChart() {
   useEffect(() => {
     const container = containerRef.current;
     if (!container || !symbol || !interval) return;
-
     container.innerHTML = "";
-
     const script = document.createElement("script");
     script.src =
       "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
@@ -73,15 +69,19 @@ export function CryptoChart() {
         "locale": "en",
         "allow_symbol_change": false,
         "support_host": "https://www.tradingview.com",
-        "hide_legend": true,
-        "hide_side_toolbar": true,
-        "hide_top_toolbar": true,
-        "hide_ideas": true,
-        "isTransparent": true,
+        "hide_legend": false,
+        "hide_side_toolbar": false,
+        "hide_top_toolbar": false,
+        "hide_ideas": false,
+        "isTransparent": false,
+        "container": "tv_chart_container",
         "overrides": {
-            "paneProperties.backgroundGradientStartColor": "#020024",
-            "paneProperties.backgroundGradientEndColor": "#4f485e"
-        }
+          "paneProperties.background": "rgba(0, 0, 0, 0)",
+          "paneProperties.backgroundType": "solid",
+          "paneProperties.legendProperties.showBackground": true,
+          "paneProperties.legendProperties.backgroundTransparency": 100
+          }
+
       }
     `;
 
@@ -92,19 +92,19 @@ export function CryptoChart() {
     };
   }, [symbol, interval]);
 
-  const currencyOptions = ["USD", "EUR", "GBP", "JPY"];
-  const displayedBalance =
-    bybitWallet?.balance?.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }) || "0.00";
+  // const currencyOptions = ["USD", "EUR", "GBP", "JPY"];
+  // const displayedBalance =
+  //   bybitWallet?.balance?.toLocaleString(undefined, {
+  //     minimumFractionDigits: 2,
+  //     maximumFractionDigits: 2,
+  //   }) || "0.00";
 
   const isTradePairsLoading =
     walletLoading && dynamicSymbolOptions.length === 0;
 
   return (
-    <Card className="w-full h-full text-white rounded-2xl shadow-xl border border-white/10 bg-transparent">
-      <CardHeader className="px-2 pt-0 pb-0">
+    <Card className="w-full h-full text-white rounded-2xl shadow-xl border border-white bg-transparent">
+      {/* <CardHeader className="px-2 pt-0 pb-0">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <CardTitle className="text-lg font-semibold">Chart</CardTitle>
 
@@ -135,9 +135,9 @@ export function CryptoChart() {
             )}
           </div>
         </div>
-      </CardHeader>
+      </CardHeader> */}
 
-      <CardContent>
+      {/* <CardContent>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-4 gap-x-8">
           <div>
             <div className="text-3xl font-bold text-yellow-400">
@@ -205,12 +205,13 @@ export function CryptoChart() {
             ))}
           </div>
         </div>
-      </CardContent>
+      </CardContent> */}
 
-      <CardContent className="px-4 pb-6 flex-1 overflow-hidden">
+      <CardContent className="px-0 pb-0 flex-1 overflow-hidden">
         <div
           ref={containerRef}
-          className="w-full h-[250px] sm:h-[300px] lg:h-[100%]"
+          id="tv_chart_container"
+          className="w-full h-full bg-transparent"
           style={{ border: "none", background: "transparent" }}
         >
           {isTradePairsLoading && (

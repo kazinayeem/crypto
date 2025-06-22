@@ -190,7 +190,7 @@ const PriceOverviewChart: React.FC = () => {
   }, [data]);
 
   return (
-    <div className="space-y-2 text-xs bg-transparent  border border-[#333] shadow-lg rounded-lg p-4 flex flex-col relative overflow-hidden custom-scrollbar ">
+    <div className="space-y-2 text-xs bg-transparent  border border-[#f1f1f1] shadow-lg rounded-lg p-4 flex flex-col relative overflow-hidden custom-scrollbar ">
       <div className="flex items-center justify-between">
         <span className="font-semibold text-sm">Bid/Ask Depth</span>
         <button

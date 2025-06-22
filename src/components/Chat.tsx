@@ -113,7 +113,7 @@ export default function FullScreenChat() {
 
   return (
     <div className="min-h-screen w-full  flex justify-center font-sans">
-      <Card className="w-full md:w-[380px] h-[90vh] text-gray-100 rounded-2xl p-5 shadow-xl border border-white/10 flex flex-col overflow-hidden bg-transparent">
+      <Card className="w-full md:w-[380px] h-[90vh] text-gray-100 rounded-2xl p-5 shadow-xl border border-white flex flex-col overflow-hidden bg-transparent">
         <CardHeader className="pb-2 border-b border-white/10">
           <CardTitle className="text-lg sm:text-xl font-semibold text-yellow-400">
             Your Agent

@@ -15,13 +15,11 @@
 //     )`;
 export const mainbgColor = `linear-gradient(
   135deg,
-    #191919 0%,        /* Initial highlight (bare surface) */
-    #191919 5%,        /* Start dark base */
-    #22233c 35%,       /* Transition to mid-base */
-    #373987 70%,       /* Mid-top accent */
-    #494cc8 75%,       /* Peak highlight */
-    #4245b1 85%,       /* Begin fading */
-    #22233c 90%,       /* Return to base */
-    #191919 95%,       /* Dark near-end */
-    #494cc6 100%       /* Final highlight (last end) */
-  )`;
+  #000000 0%,        /* Top-left */
+  #13132a 15%,       /* Deep navy transition */
+  #26265a 30%,       /* Mid-dark violet */
+  #383bca 50%,       /* Bright center highlight */
+  #2f30a0 65%,       /* Fade toward base violet */
+  #1b1c3b 80%,       /* Blend to dark */
+  #000000 100%       /* Bottom-right */
+)`;

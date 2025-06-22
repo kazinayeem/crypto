@@ -14,21 +14,21 @@ export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
   todayChange,
   last7DaysChange,
 }) => {
-  // Helper: Get green/red color class based on positive/negative value
+
   const getColorClass = (value: number) =>
     value >= 0 ? "text-green-500" : "text-red-500";
 
-  // Helper: Arrow symbol up/down
+
   const getSymbol = (value: number) => (value >= 0 ? "▲" : "▼");
 
-  // Framer Motion variants for smooth transitions
+  
   const changeVariants = {
     initial: { opacity: 0, y: 10 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -10 },
   };
 
-  // Format large numbers into short form e.g. 12.3K, 1.2M
+ 
   const formatShortNumber = (num: number) => {
     if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
     if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
@@ -37,7 +37,7 @@ export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
   };
 
   return (
-    <div className="pb-4 border-b border-[#333]">
+    <div className="pb-4 border-b border-[#fff]">
       <CardHeader className="p-0 mb-2">
         <CardTitle className="text-xs text-[#e2e2e3] uppercase tracking-wide">
           Total Balance
@@ -56,12 +56,11 @@ export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
             whitespace-nowrap
           "
         >
-          {/* Short format on mobile to large laptops */}
+        
           <span className="inline xl:hidden">
             ${formatShortNumber(totalBalance)}
           </span>
 
-          {/* Full format on xl and larger screens */}
           <span className="hidden xl:inline">
             $
             {totalBalance.toLocaleString(undefined, {
