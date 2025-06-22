@@ -14,7 +14,7 @@ import { fetchBybitWalletData } from "@/features/wallets/walletsSlice";
 export function CryptoChart() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [symbol, setSymbol] = useState("NASDAQ:AAPL");
-  const interval = useState("D");
+  const [interval] = useState("D");
   // const [currency, setCurrency] = useState("USD");
   // const [showSymbolDropdown, setShowSymbolDropdown] = useState(false);
   // const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
