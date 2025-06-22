@@ -9,14 +9,17 @@ export function Header() {
   const user = useSelector((state: RootState) => state.user.users[0]);
 
   return (
-    <header className="flex items-center justify-between p-4 mb-2     transition-colors">
-      <div className="flex items-center space-x-2">
+    <header className="flex items-center justify-between p-4 mb-5 transition-colors">
+      <div className="flex items-center space-x-2 p-2 ml-5">
         <span className="text-2xl font-bold text-yellow-500 dark:text-yellow-300">
           Bee
         </span>
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          Coming Soon
+        </span>
       </div>
 
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-4 p-2">
         <Button
           variant="outline"
           className="rounded-full px-4 py-2 text-sm transition-colors"

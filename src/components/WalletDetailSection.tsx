@@ -161,8 +161,8 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
         </Button>
       </CardHeader>
 
-      <CardContent className="p-4 flex flex-col flex-grow min-h-0">
-        <p className="text-3xl font-bold text-yellow-500 mb-3 truncate">
+      <CardContent className="p-4 flex flex-col flex-grow min-h-0 overflow-hidden">
+        <p className="text-3xl font-bold text-yellow-500 mb-3 truncate min-h-10">
           {getHeaderValue()}
         </p>
 
@@ -194,7 +194,7 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
         </div>
 
         {/* Main Tabs */}
-        <div className="flex border-b border-[#333] mb-4 whitespace-nowrap overflow-x-auto">
+        <div className="flex gap-2 border-b p-2 border-[#fff] mb-4 whitespace-nowrap overflow-x-auto min-h-[60px]">
           {["Spot", "Futures", "Fund Transfer", "Trade"].map((tab) => (
             <Button
               key={tab}
@@ -204,13 +204,14 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
                 setActiveSpotSubTab("Balance");
                 setActiveFuturesSubTab("Positions");
               }}
-              className={`pb-2 rounded-none border-b-2 whitespace-nowrap
+              className={`pb-2 rounded-[10px] whitespace-nowrap
         text-sm sm:text-xs md:text-sm
         px-2 sm:px-2 md:px-4
+        border border-white 
         ${
           activeMainTab === tab
-            ? "border-yellow-500 text-yellow-500"
-            : "border-transparent text-gray-400 hover:text-gray-200"
+            ? "bg-white text-black"
+            : "bg-transparent text-white hover:text-gray-300"
         }`}
             >
               {tab}
@@ -368,19 +369,19 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
 
               {/* Trade Tab */}
               {activeMainTab === "Trade" && (
-                <>
-                  <div className="mb-4 relative">
+                <div className="flex flex-col space-y-4 ">
+                  <div className="mb-1 relative">
                     <input
                       type="search"
                       placeholder="Search"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 rounded-md bg-[#2a2a2a] text-gray-100 border border-[#333] focus:outline-none focus:border-yellow-500"
+                      className="w-full pl-10 pr-4 py-2 rounded-md bg-transparent text-gray-100 border border-[#f0f0f0] focus:outline-none focus:border-yellow-500"
                       aria-label="Search trade pairs"
                     />
                     <Search
                       className="absolute left-3 top-2.5 text-gray-400 pointer-events-none"
-                      size={16}
+                      size={18}
                       aria-hidden="true"
                     />
                   </div>
@@ -399,7 +400,7 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
                       </p>
                     )}
                   </div>
-                </>
+                </div>
               )}
             </>
           )}

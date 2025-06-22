@@ -14,21 +14,17 @@ export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
   todayChange,
   last7DaysChange,
 }) => {
-
   const getColorClass = (value: number) =>
     value >= 0 ? "text-green-500" : "text-red-500";
 
-
   const getSymbol = (value: number) => (value >= 0 ? "▲" : "▼");
 
-  
   const changeVariants = {
     initial: { opacity: 0, y: 10 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -10 },
   };
 
- 
   const formatShortNumber = (num: number) => {
     if (num >= 1e9) return (num / 1e9).toFixed(1) + "B";
     if (num >= 1e6) return (num / 1e6).toFixed(1) + "M";
@@ -37,7 +33,7 @@ export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
   };
 
   return (
-    <div className="pb-4 border-b border-[#fff]">
+    <div className="pb-4 border-b border-[#fff] ">
       <CardHeader className="p-0 mb-2">
         <CardTitle className="text-xs text-[#e2e2e3] uppercase tracking-wide">
           Total Balance
@@ -56,7 +52,6 @@ export const TotalBalanceSection: React.FC<TotalBalanceSectionProps> = ({
             whitespace-nowrap
           "
         >
-        
           <span className="inline xl:hidden">
             ${formatShortNumber(totalBalance)}
           </span>
