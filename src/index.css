@@ -130,3 +130,7 @@
 .tradingview-widget-container {
   background: transparent !important;
 }
+iframe {
+  border-radius: 1rem !important; /* Matches rounded-2xl which is typically 1rem */
+  overflow: hidden !important; /* Crucial to clip content within the rounded corners */
+}
