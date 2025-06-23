@@ -134,3 +134,33 @@ iframe {
   border-radius: 1rem !important; /* Matches rounded-2xl which is typically 1rem */
   overflow: hidden !important; /* Crucial to clip content within the rounded corners */
 }
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #222; /* color of the track */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #555; /* color of the scroll thumb */
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #777; /* color of the scroll thumb on hover */
+}
+
+@keyframes pulse-overlay {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+.animate-pulse-overlay {
+  animation: pulse-overlay 1.5s infinite ease-in-out;
+}

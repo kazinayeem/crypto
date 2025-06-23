@@ -9,6 +9,7 @@ import { store } from "./store";
 import "@fontsource/montserrat/800.css";
 import DashBoard from "./DashBoard";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { LiveKitConnectionProvider } from "./hooks/useLiveKitConnection";
 
 const router = createBrowserRouter([
   {
@@ -36,7 +37,9 @@ if (root) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <Provider store={store}>
-        <RouterProvider router={router} />
+        <LiveKitConnectionProvider>
+          <RouterProvider router={router} />
+        </LiveKitConnectionProvider>
       </Provider>
     </React.StrictMode>
   );
