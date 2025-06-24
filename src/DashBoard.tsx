@@ -83,7 +83,7 @@ function DashBoard() {
       style={{
         backgroundImage: `${mainbgColor}`,
       }}
-      className="flex flex-col min-h-screen  text-foreground font-sans"
+      className="flex flex-col  text-foreground font-sans min-h-[140vh]"
     >
       <Header />
       {/* <LiveKitVideoCall /> */}
@@ -93,10 +93,10 @@ function DashBoard() {
             className="flex flex-col gap-4 overflow-hidden"
             style={{ flexBasis: "30%" }}
           >
-            <div className="flex-1 min-h-0 overflow-auto h-auto">
+            <div className="flex-1 min-h-0 overflow-auto ">
               <PortfolioDashboard />
             </div>
-            <div className="flex-1 min-h-0 overflow-auto">
+            <div className="flex-1 min-h-0 overflow-hidden">
               <PriceOverviewChart />
             </div>
           </div>
@@ -109,7 +109,7 @@ function DashBoard() {
             <div className="flex-1 min-h-0 overflow-auto">
               <CryptoChart />
             </div>
-            <div className="flex-1 min-h-0 overflow-auto">
+            <div className="flex-1 min-h-0 overflow-hidden">
               <FearGreedIndex />
             </div>
           </div>

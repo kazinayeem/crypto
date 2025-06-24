@@ -119,14 +119,14 @@
   }
 }
 /* In your global CSS file or a CSS module */
-.custom-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
+/* .custom-scrollbar {
+  -ms-overflow-style: none; 
+  scrollbar-width: none;
+} */
 
-.custom-scrollbar::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
+/* .custom-scrollbar::-webkit-scrollbar {
+  display: none; 
+} */
 .tradingview-widget-container {
   background: transparent !important;
 }
@@ -134,23 +134,8 @@ iframe {
   border-radius: 1rem !important; /* Matches rounded-2xl which is typically 1rem */
   overflow: hidden !important; /* Crucial to clip content within the rounded corners */
 }
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px; /* width of the scrollbar */
-}
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #222; /* color of the track */
-  border-radius: 10px;
-}
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #555; /* color of the scroll thumb */
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #777; /* color of the scroll thumb on hover */
-}
 
 @keyframes pulse-overlay {
   0%,

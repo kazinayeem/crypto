@@ -44,8 +44,24 @@ const generateSimulatedData = (): SimulatedData => {
 };
 
 const PriceOverviewChart: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 400, height: 250 });
   const [data, setData] = useState<SimulatedData>(generateSimulatedData);
+
+  // Responsive chart sizing
+  useEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const { width } = entry.contentRect;
+        setDimensions({ width, height: width * 0.6 }); // 60% height ratio
+      }
+    });
+
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
+  }, []);
 
   const drawChart = (
     bids: Order[],
@@ -56,18 +72,19 @@ const PriceOverviewChart: React.FC = () => {
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    const width = svgRef.current?.clientWidth || 400;
-    const height = svgRef.current?.clientHeight || 250;
+    const { width, height } = dimensions;
     const margin = { top: 10, right: 30, bottom: 30, left: 40 };
 
     let cumB: any[] = [],
       cumA: any[] = [],
       sumB = 0,
       sumA = 0;
+
     bids.forEach((d) => {
       sumB += d.vol;
       cumB.push({ p: d.pr, v: sumB });
     });
+
     asks.forEach((d) => {
       sumA += d.vol;
       cumA.push({ p: d.pr, v: sumA });
@@ -186,12 +203,16 @@ const PriceOverviewChart: React.FC = () => {
         : data.manipulation > 0.05
         ? "#facc15"
         : "#22c55e";
+
     drawChart(data.bids, data.asks, data.priceLast, color);
-  }, [data]);
+  }, [data, dimensions]);
 
   return (
-    <div className="space-y-2 text-xs bg-transparent  border border-[#f1f1f1] shadow-lg rounded-lg p-4 flex flex-col relative overflow-hidden custom-scrollbar ">
-      <div className="flex items-center justify-between">
+    <div
+      ref={containerRef}
+      className="flex flex-col flex-1 space-y-2 text-xs bg-transparent border border-[#f1f1f1] shadow-lg rounded-lg p-2"
+    >
+      <div className="flex items-center justify-between p-2">
         <span className="font-semibold text-sm">Bid/Ask Depth</span>
         <button
           onClick={() => setData(generateSimulatedData())}
@@ -203,10 +224,12 @@ const PriceOverviewChart: React.FC = () => {
 
       <svg
         ref={svgRef}
-        className="w-full h-[250px]  rounded shadow"
+        width={dimensions.width}
+        height={dimensions.height}
+        className="rounded shadow bg-transparent"
       />
 
-      <div className="grid grid-cols-2 gap-2  p-2 rounded shadow">
+      <div className="grid grid-cols-2 gap-2 p-2 rounded shadow">
         <div className="space-y-1">
           <div className="flex justify-between">
             <span>Imbalance:</span>
