@@ -1,16 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router";
-import DotGrid from "./components/ui/DotGrid";
+import DotGrid from "./components/ui/DotGrid"; // Assuming DotGrid component exists
+
+interface Plan {
+  plan_id: number;
+  name: string;
+  price_cents: number;
+  interval: string;
+  features: string;
+  created_at: string;
+  updated_at: string;
+}
 
 const App: React.FC = () => {
   const navigation = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loadingPlans, setLoadingPlans] = useState(true);
+  const [errorPlans, setErrorPlans] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const response = await fetch(
+          "https://api-bee-c7fehwc3fdbfc9d9.canadacentral-01.azurewebsites.net/api/subscription_plans",
+          {
+            method: "GET", // Assuming it's a GET request for retrieving plans
+            headers: {
+              "X-API-KEY": "synth",
+              "X-API-SECRET": "pass",
+              "Content-Type": "application/json", // Good practice, especially if sending a body
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setPlans(data.plans);
+      } catch (error) {
+        console.error("Error fetching plans:", error);
+        setErrorPlans("Failed to load subscription plans.");
+      } finally {
+        setLoadingPlans(false);
+      }
+    };
+
+    fetchPlans();
+  }, []);
+
   const handleLogin = () => {
     navigation("/auth", {
       viewTransition: true,
     });
   };
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const mainBackgroundGradientStyle = {
     background: `linear-gradient(
@@ -90,6 +134,35 @@ const App: React.FC = () => {
       />
     </svg>
   );
+
+  const getPlanFeatures = (planName: string) => {
+    switch (planName) {
+      case "Free":
+        return [
+          "3 Generations/day",
+          "Limited Template Library",
+          "Basic Token Preview",
+        ];
+      case "Pro":
+        return [
+          "15 Generations/day", // Assuming 'Pro' from the API maps to 'Starter Pack' in your UI for now based on features, needs adjustment if 'Pro' is distinct
+          "Access to Community Forum",
+          "Access to Standard Template Library",
+          "Basic Token Preview",
+          "Priority Email Support",
+        ];
+      case "Pro Pack": // This would be the 'Pro Pack' from your static code if it's separate from API 'Pro'
+        return [
+          "Unlimited Generations",
+          "Everything in Pro Plan",
+          "Add up to 6 Tokens",
+          "Early Access to New Features",
+          "Built-in Real-World Meme Templates",
+        ];
+      default:
+        return [];
+    }
+  };
 
   return (
     <div
@@ -469,133 +542,6 @@ const App: React.FC = () => {
           }}
         />
       </div>
-      {/* <div
-        style={mainBackgroundGradientStyle}
-        className="relative w-full overflow-hidden"
-      >
-        <div
-          className={cn(
-            "absolute inset-0 z-0",
-            "[background-size:20px_20px]",
-            "[background-image:radial-gradient(#d4d4d4_1px,transparent_1px)]",
-            "dark:[background-image:radial-gradient(#404040_1px,transparent_1px)]"
-          )}
-        />
-        <div className="pointer-events-none absolute inset-0 z-10 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]" />
-
-        <div className="relative z-20">
-          <motion.section
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={sectionVariants}
-            className="relative z-20 py-16 px-4 md:px-8 text-center flex flex-col justify-center items-center"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Revolutionize Your Crypto <br /> Experience with AI
-            </h2>
-            <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
-              SynthesizeAI is an AI-powered platform designed to simplify your
-              crypto journey. From vital meme creation to AI assistants that
-              automate tasks, we've got everything you need to engage your
-              community and streamline operations.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 rounded-lg bg-[#ffd31b] text-white text-lg font-semibold hover:bg-[#ccaa00] transition-colors duration-300 shadow-lg"
-              >
-                Get Started
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 rounded-lg border border-white text-white text-lg font-semibold hover:bg-white hover:text-[#0f0e1d] transition-colors duration-300 shadow-lg"
-              >
-                Learn More
-              </motion.button>
-            </div>
-          </motion.section>
-        </div>
-        <motion.section
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          variants={sectionVariants}
-          className="bg-[#1a1a2e] py-16 px-4 md:px-8"
-        >
-          <div className="max-w-6xl mx-auto bg-[#0d0c1c] rounded-2xl shadow-xl flex flex-col lg:flex-row overflow-hidden min-h-min md:min-h-[500px]">
-            <div className="lg:w-1/3 p-6 md:p-8 border-b lg:border-b-0 lg:border-r border-[#16213e]">
-              <h3 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
-                Text to Image generator
-              </h3>
-              <ul className="space-y-3 md:space-y-4 text-gray-300 text-base md:text-lg">
-                <li className="cursor-pointer hover:text-[#ffd31b] transition-colors duration-200">
-                  Image to Image generator
-                </li>
-                <li className="cursor-pointer hover:text-[#ffd31b] transition-colors duration-200">
-                  Caption generator
-                </li>
-              </ul>
-            </div>
-
-            <div className="lg:w-2/3 p-6 md:p-8 flex flex-col justify-between">
-              <h3 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8">
-                Try Prompts
-              </h3>
-              <div className="flex-grow flex items-center justify-center mb-6 md:mb-8">
-                <div className="w-32 h-32 sm:w-48 sm:h-48 bg-[#16213e] rounded-full flex items-center justify-center shadow-inner">
-                  <svg
-                    width="70"
-                    height="70"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-[#ffd31b]"
-                  >
-                    <path d="M12 2L2 7V17L12 22L22 17V7L12 2Z" />
-                    <polyline points="2 7 12 12 22 7" />
-                    <polyline points="2 17 12 12 22 17" />
-                    <polyline points="12 2V12" />
-                    <line x1="12" y1="22" x2="12" y2="12" />
-                  </svg>
-                </div>
-              </div>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Enter your prompt here..."
-                  className="w-full p-3 pr-12 md:p-4 md:pr-16 rounded-lg bg-[#2c2c4d] text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ffd31b]"
-                />
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#ffd31b] p-1 md:p-2 rounded-full hover:bg-[#ccaa00] transition-colors duration-300"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-white"
-                  >
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                  </svg>
-                </motion.button>
-              </div>
-            </div>
-          </div>
-        </motion.section>
-      </div> */}
 
       <motion.section
         initial="hidden"
@@ -791,86 +737,99 @@ const App: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          <motion.div
-            variants={cardVariants}
-            className="bg-[#0f0e1d] p-8 rounded-2xl text-left flex flex-col justify-between border border-[#16213e] relative"
-          >
-            <h3 className="text-2xl font-bold mb-4">Freemium Pack</h3>
-            <p className="text-gray-300 mb-6">
-              A great starting point for newcomers exploring our platform with
-              basic features.
-            </p>
-            <p className="text-5xl font-bold mb-6">
-              $0<span className="text-lg font-normal">/month</span>
-            </p>
-            <ul className="text-gray-300 space-y-2 mb-8">
-              <li>{checkIcon}3 Generations/day</li>
-              <li>{checkIcon}Limited Template Library</li>
-              <li>{checkIcon}Basic Token Preview</li>
-            </ul>
-            <button className="w-full px-6 py-3 rounded-lg bg-[#ffd31b] text-white text-lg font-semibold hover:bg-[#ccaa00] transition-colors duration-300 shadow-lg">
-              Current Plan
-            </button>
-          </motion.div>
+          {loadingPlans && <p className="text-white">Loading plans...</p>}
+          {errorPlans && <p className="text-red-500">{errorPlans}</p>}
+          {!loadingPlans && !errorPlans && plans.length === 0 && (
+            <p className="text-white">No plans available.</p>
+          )}
 
-          <motion.div
-            variants={cardVariants}
-            className="bg-[#16213e] p-8 rounded-2xl text-left flex flex-col justify-between border-2 border-[#ffd31b] relative shadow-lg"
-          >
-            <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#ffd31b] text-white px-4 py-1 rounded-full text-sm font-semibold">
-              MOST POPULAR
-            </span>
-            <h3 className="text-2xl font-bold mb-4">Starter Pack</h3>
-            <p className="text-gray-300 mb-6">
-              Ideal for individuals seeking more generations and enhanced
-              functionality.
-            </p>
-            <p className="text-5xl font-bold mb-6">
-              $19<span className="text-lg font-normal">/month</span>
-            </p>
-            <ul className="text-gray-300 space-y-2 mb-8">
-              <li>{checkIcon}15 Generations/day</li>
-              <li>{checkIcon}Access to Community Forum</li>
-              <li>{checkIcon}Access to Standard Template Library</li>
-              <li>{checkIcon}Basic Token Preview</li>
-              <li>{checkIcon}Priority Email Support</li>
-            </ul>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="w-full px-6 py-3 rounded-lg bg-[#ffd31b] text-white text-lg font-semibold hover:bg-[#ccaa00] transition-colors duration-300 shadow-lg flex items-center justify-center"
+          {plans.map((plan) => (
+            <motion.div
+              key={plan.plan_id}
+              variants={cardVariants}
+              className={`bg-[#0f0e1d] p-8 rounded-2xl text-left flex flex-col justify-between relative ${
+                plan.name === "Pro"
+                  ? "border-2 border-[#ffd31b] shadow-lg"
+                  : "border border-[#16213e]"
+              }`}
             >
-              Buy Now <span className="ml-2">→</span>
-            </motion.button>
-          </motion.div>
-
-          <motion.div
-            variants={cardVariants}
-            className="bg-[#0f0e1d] p-8 rounded-2xl text-left flex flex-col justify-between border border-[#16213e] relative"
-          >
-            <h3 className="text-2xl font-bold mb-4">Pro Pack</h3>
-            <p className="text-gray-300 mb-6">
-              Unlock unlimited generations and gain early access to new
-              features.
-            </p>
-            <p className="text-5xl font-bold mb-6">
-              Custom<span className="text-lg font-normal">/month</span>
-            </p>
-            <ul className="text-gray-300 space-y-2 mb-8">
-              <li>{checkIcon}Unlimited Generations</li>
-              <li>{checkIcon}Everything in Pro Plan</li>
-              <li>{checkIcon}Add up to 6 Tokens</li>
-              <li>{checkIcon}Early Access to New Features</li>
-              <li>{checkIcon}Built-in Real-World Meme Templates</li>
-            </ul>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="w-full px-6 py-3 rounded-lg bg-[#ffd31b] text-white text-lg font-semibold hover:bg-[#ccaa00] transition-colors duration-300 shadow-lg flex items-center justify-center"
-            >
-              Contact us <span className="ml-2">→</span>
-            </motion.button>
-          </motion.div>
+              {plan.name === "Pro" && (
+                <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#ffd31b] text-white px-4 py-1 rounded-full text-sm font-semibold">
+                  MOST POPULAR
+                </span>
+              )}
+              <h3 className="text-2xl font-bold mb-4">
+                {plan.name === "Free"
+                  ? "Freemium Pack"
+                  : plan.name === "Pro"
+                  ? "Starter Pack"
+                  : plan.name}
+              </h3>
+              <p className="text-gray-300 mb-6">
+                {plan.name === "Free"
+                  ? "A great starting point for newcomers exploring our platform with basic features."
+                  : plan.name === "Pro"
+                  ? "Ideal for individuals seeking more generations and enhanced functionality."
+                  : "Unlock unlimited generations and gain early access to new features."}
+              </p>
+              <p className="text-5xl font-bold mb-6">
+                {plan.price_cents === 0 ? "$0" : `$${plan.price_cents / 100}`}
+                <span className="text-lg font-normal">/{plan.interval}</span>
+              </p>
+              <ul className="text-gray-300 space-y-2 mb-8">
+                {getPlanFeatures(plan.name).map((feature, index) => (
+                  <li key={index}>
+                    {checkIcon}
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className={`w-full px-6 py-3 rounded-lg text-white text-lg font-semibold transition-colors duration-300 shadow-lg flex items-center justify-center ${
+                  plan.name === "Free"
+                    ? "bg-[#ffd31b] hover:bg-[#ccaa00]"
+                    : "bg-[#ffd31b] hover:bg-[#ccaa00]"
+                }`}
+              >
+                {plan.name === "Free" ? "Current Plan" : "Buy Now"}
+                {plan.name !== "Free" && <span className="ml-2">→</span>}
+              </motion.button>
+            </motion.div>
+          ))}
+          {/* Static Pro Pack if it's not coming from API but you want to keep it */}
+          {!loadingPlans &&
+            !errorPlans &&
+            !plans.find((p) => p.name === "Pro Pack") && (
+              <motion.div
+                variants={cardVariants}
+                className="bg-[#0f0e1d] p-8 rounded-2xl text-left flex flex-col justify-between border border-[#16213e] relative"
+              >
+                <h3 className="text-2xl font-bold mb-4">Pro Pack</h3>
+                <p className="text-gray-300 mb-6">
+                  Unlock unlimited generations and gain early access to new
+                  features.
+                </p>
+                <p className="text-5xl font-bold mb-6">
+                  Custom<span className="text-lg font-normal">/month</span>
+                </p>
+                <ul className="text-gray-300 space-y-2 mb-8">
+                  <li>{checkIcon}Unlimited Generations</li>
+                  <li>{checkIcon}Everything in Pro Plan</li>
+                  <li>{checkIcon}Add up to 6 Tokens</li>
+                  <li>{checkIcon}Early Access to New Features</li>
+                  <li>{checkIcon}Built-in Real-World Meme Templates</li>
+                </ul>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="w-full px-6 py-3 rounded-lg bg-[#ffd31b] text-white text-lg font-semibold hover:bg-[#ccaa00] transition-colors duration-300 shadow-lg flex items-center justify-center"
+                >
+                  Contact us <span className="ml-2">→</span>
+                </motion.button>
+              </motion.div>
+            )}
         </div>
       </motion.section>
 

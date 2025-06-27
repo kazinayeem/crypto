@@ -1,7 +1,7 @@
 import { generateLiveKitToken } from "@/lib/generateLiveKitToken";
 import { useState, useCallback, createContext, useContext } from "react";
 import type { ReactNode } from "react";
-
+import { Room } from "livekit-client";
 export interface ConnectionDetails {
   wsUrl: string;
   token: string;
@@ -13,6 +13,7 @@ export interface LiveKitConnectionContextType {
   connection: ConnectionDetails;
   connect: (metadata?: Record<string, any>) => Promise<void>;
   disconnect: () => void;
+  room: Room | null;
 }
 
 const LiveKitConnectionContext = createContext<
@@ -24,6 +25,7 @@ export const LiveKitConnectionProvider = ({
 }: {
   children: ReactNode;
 }) => {
+  const [room, setRoom] = useState<Room | null>(null);
   const [connection, setConnection] = useState<ConnectionDetails>({
     wsUrl: "",
     token: "",
@@ -32,7 +34,8 @@ export const LiveKitConnectionProvider = ({
   const connect = useCallback(async (metadata?: Record<string, any>) => {
     try {
       const data = await generateLiveKitToken(metadata);
-
+      const newRoom = new Room();
+      setRoom(newRoom);
       setConnection({
         wsUrl: data.livekitUrl,
         token: data.accessToken,
@@ -42,6 +45,7 @@ export const LiveKitConnectionProvider = ({
     } catch (error) {
       console.error("Error generating LiveKit token:", error);
       setConnection({ wsUrl: "", token: "", shouldConnect: false });
+      setRoom(null);
     }
   }, []);
 
@@ -81,7 +85,7 @@ export const LiveKitConnectionProvider = ({
 
   return (
     <LiveKitConnectionContext.Provider
-      value={{ connection, connect, disconnect }}
+      value={{ connection, connect, disconnect, room }}
     >
       {children}
     </LiveKitConnectionContext.Provider>

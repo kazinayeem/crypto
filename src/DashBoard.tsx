@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Header } from "./components/Header";
-import  CryptoChart  from "./components/CryptoChart";
-import FearGreedIndex  from "./components/FearGreedIndex";
+import CryptoChart from "./components/CryptoChart";
+import FearGreedIndex from "./components/FearGreedIndex";
 import { PortfolioDashboard } from "./components/PortfolioDashboard";
 import FullScreenChat from "./components/Chat";
 import { MessageCircle } from "lucide-react";
@@ -31,6 +31,7 @@ function DashBoard() {
       >
         <Header />
         <PortfolioDashboard />
+        <CryptoChart />
         <PriceOverviewChart />
         <FearGreedIndex />
 

@@ -6,20 +6,17 @@ import { Send, Mic } from "lucide-react";
 import { LiveKitRoom } from "@livekit/components-react";
 import "@livekit/components-styles";
 import { useLiveKitConnection } from "@/hooks/useLiveKitConnection";
-import ChatMessage from "./chat/ChatMessage";
 import { VoiceControls } from "./chat/VoiceControls";
 import { Wave } from "./ui/wave";
-
-interface MessageProps {
-  sender: "agent" | "user";
-  text: string;
-}
+import { TranscriptionTile } from "./chat/transcriptions/TranscriptionTile";
+import { Track } from "livekit-client";
+import type { Participant, TrackPublication } from "livekit-client";
 
 export default function FullScreenChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { connection, connect, disconnect } = useLiveKitConnection();
+  const { connection, connect, disconnect, room } = useLiveKitConnection();
+  const activeRoom = room;
 
-  const [messages, setMessages] = useState<MessageProps[]>([]);
   const [input, setInput] = useState("");
   const [voiceActive, setVoiceActive] = useState(false);
   const [isAgentSpeaking, setIsAgentSpeaking] = useState(false);
@@ -27,35 +24,7 @@ export default function FullScreenChat() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const handleAgentResponse = useCallback(
-    async (messageText: string, shouldSpeak: boolean) => {
-      // Replace with your actual AI response logic
-      const response = `Response to: "${messageText}"`;
-      
-      setMessages((prev) => [...prev, { sender: "agent", text: response }]);
-      
-      if (shouldSpeak && voiceActive) {
-        setIsAgentSpeaking(true);
-        speechSynthesis.cancel();
-        
-        const utterance = new SpeechSynthesisUtterance(response);
-        utterance.onend = () => setIsAgentSpeaking(false);
-        utterance.onerror = () => setIsAgentSpeaking(false);
-        speechSynthesis.speak(utterance);
-      }
-    },
-    [voiceActive]
-  );
-
-  const sendTextMessage = () => {
-    if (!input.trim()) return;
-    const message = input.trim();
-    setMessages((prev) => [...prev, { sender: "user", text: message }]);
-    setInput("");
-    handleAgentResponse(message, false);
-  };
+  }, []);
 
   const toggleVoiceChat = async () => {
     if (!voiceActive) {
@@ -64,28 +33,71 @@ export default function FullScreenChat() {
         setVoiceActive(true);
       } catch (error) {
         console.error("Failed to connect voice chat:", error);
+        setVoiceActive(false);
       }
     } else {
       speechSynthesis.cancel();
-      disconnect();
+      await disconnect();
       setVoiceActive(false);
       setIsUserSpeakingViaVoice(false);
       setIsAgentSpeaking(false);
     }
   };
 
-  const handleSpeechToText = useCallback(
-    (text: string) => {
+  const handleSendMessageFromInput = useCallback(
+    async (text: string) => {
       if (!text.trim()) return;
-      setMessages((prev) => [...prev, { sender: "user", text }]);
-      handleAgentResponse(text, true);
+
+      try {
+        // Send text message through LiveKit
+        if (activeRoom?.localParticipant) {
+          await activeRoom.localParticipant.sendText(text, {
+            topic: "lk.chat",
+          });
+        }
+        setInput("");
+
+        // For demo purposes, simulate agent response
+        const simulatedResponse = `Response to: "${text}"`;
+        setIsAgentSpeaking(true);
+        speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(simulatedResponse);
+        utterance.onend = () => setIsAgentSpeaking(false);
+        utterance.onerror = () => setIsAgentSpeaking(false);
+        speechSynthesis.speak(utterance);
+      } catch (error) {
+        console.error("Failed to send message:", error);
+      }
     },
-    [handleAgentResponse]
+    [activeRoom]
   );
+
+  const handleSpeechToText = useCallback((text: string) => {
+    if (!text.trim()) return;
+    // This will be handled by the TranscriptionTile component
+    console.log("Speech to text:", text);
+  }, []);
 
   const handleUserSpeakingStatus = useCallback((speaking: boolean) => {
     setIsUserSpeakingViaVoice(speaking);
   }, []);
+
+  const agentParticipant = activeRoom
+    ? (Array.from(activeRoom.remoteParticipants.values())[0] as
+        | Participant
+        | undefined)
+    : undefined;
+
+  const agentAudioTrackRef = agentParticipant
+    ? {
+        participant: agentParticipant,
+        publication: agentParticipant.getTrackPublication(
+          Track.Source.Microphone
+        ) as TrackPublication | undefined,
+        source: Track.Source.Microphone,
+      }
+    : undefined;
 
   return (
     <div className="min-h-screen w-full flex justify-center font-sans bg-transparent">
@@ -97,9 +109,16 @@ export default function FullScreenChat() {
         </CardHeader>
 
         <CardContent className="flex-grow overflow-y-auto px-4 py-2 custom-scrollbar bg-transparent">
-          {messages.map((msg, i) => (
-            <ChatMessage key={i} sender={msg.sender} text={msg.text} />
-          ))}
+          {activeRoom && agentAudioTrackRef?.participant ? (
+            <TranscriptionTile
+              agentAudioTrack={agentAudioTrackRef}
+              accentColor="#facc15"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400">
+              Connect to start chat.
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </CardContent>
 
@@ -115,7 +134,6 @@ export default function FullScreenChat() {
               setIsUserSpeakingViaVoice(false);
               setIsAgentSpeaking(false);
             }}
-            style={{ display: "none" }}
           >
             <VoiceControls
               onSpeechToText={handleSpeechToText}
@@ -134,9 +152,7 @@ export default function FullScreenChat() {
                 voiceActive ? "text-green-500" : "text-muted-foreground"
               } ${
                 voiceActive && isUserSpeakingViaVoice ? "bg-green-600/30" : ""
-              } ${
-                voiceActive && isAgentSpeaking ? "bg-yellow-400/30" : ""
-              }`}
+              } ${voiceActive && isAgentSpeaking ? "bg-yellow-400/30" : ""}`}
             >
               <Mic size={20} />
             </Button>
@@ -155,12 +171,18 @@ export default function FullScreenChat() {
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendTextMessage()}
+            onKeyDown={(e) =>
+              e.key === "Enter" && handleSendMessageFromInput(input)
+            }
             placeholder="Type a message"
             className="flex-grow bg-[#292a55] text-white border-none rounded-full px-4 py-2"
           />
 
-          <Button variant="ghost" size="icon" onClick={sendTextMessage}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleSendMessageFromInput(input)}
+          >
             <Send size={20} />
           </Button>
         </div>

@@ -8,6 +8,7 @@ import type { WalletData } from "@/wallets";
 import type { AppDispatch, RootState } from "@/store";
 import { fetchBybitWalletData } from "@/features/wallets/walletsSlice";
 import { TradePage } from "./TradePage";
+import { useActiveWalletName } from "@/hooks/useActiveWalletName";
 
 export function PortfolioDashboard() {
   const [activeView, setActiveView] = useState<"list" | "detail" | "tradePage">(
@@ -35,7 +36,12 @@ export function PortfolioDashboard() {
   const bybitWallet = wallets.find((wallet) => wallet.id === "bybit");
   const todayChange = bybitWallet?.todayChange ?? 0;
   const last7DaysChange = bybitWallet?.last7DaysChange ?? 0;
-
+  const activeWalletName = useActiveWalletName(selectedWallet);
+  useEffect(() => {
+    if (activeWalletName) {
+      console.log("Active wallet name:", activeWalletName);
+    }
+  }, [activeWalletName]);
   const handleWalletClick = (wallet: WalletData) => {
     setSelectedWallet(wallet);
     setActiveView("detail");

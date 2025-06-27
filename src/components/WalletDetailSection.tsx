@@ -3,6 +3,7 @@ import React, { useState, useMemo } from "react";
 import { Button } from "./ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { WalletData } from "@/wallets";
+import FundTransferForm from "./FundTransferForm";
 
 const SpotAssetItem: React.FC<any> = ({ name, amount, usdValue, iconUrl }) => (
   <div className="flex items-center justify-between py-3 border-b border-gray-200 dark:border-gray-700 last:border-b-0">
@@ -362,9 +363,7 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
 
               {/* Fund Transfer Tab */}
               {activeMainTab === "Fund Transfer" && (
-                <p className="text-gray-400 text-center py-4">
-                  Fund Transfer content will go here.
-                </p>
+                <FundTransferForm/>
               )}
 
               {/* Trade Tab */}

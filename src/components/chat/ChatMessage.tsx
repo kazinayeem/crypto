@@ -2,7 +2,7 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface MessageProps {
-  sender: "agent" | "user";
+  sender: "agent" | "user" | unknown;
   text: string;
 }
 

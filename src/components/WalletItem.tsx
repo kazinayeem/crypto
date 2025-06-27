@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "./ui/button";
 import type { WalletData } from "@/wallets";
 import { ApiCredentialsModal } from "./ApiCredentialsModal"; // Modal for API credentials
+import { AddWalletModal } from "./AddWalletModal";
 
 interface WalletItemProps {
   icon: React.ReactNode;
@@ -96,6 +97,70 @@ export const WalletList: React.FC<WalletListProps> = ({
   handleWalletClick,
   isMobileView,
 }) => {
+  const [isAddWalletModalOpen, setIsAddWalletModalOpen] = useState(false);
+  const [, setSelectedExchange] = useState<string | null>(null);
+
+  // Sample exchange data for AddWalletModal
+  const exchanges = [
+    {
+      name: "Binance",
+      icon: (
+        <img
+          src="https://ui-avatars.com/api/?name=B&background=000&color=fff&bold=true"
+          className="w-6 h-6 rounded-full"
+        />
+      ),
+    },
+    {
+      name: "Bybit",
+      icon: (
+        <img
+          src="https://ui-avatars.com/api/?name=BY&background=111&color=fff&bold=true"
+          className="w-6 h-6 rounded-full"
+        />
+      ),
+    },
+    {
+      name: "Coinbase",
+      icon: (
+        <img
+          src="https://ui-avatars.com/api/?name=C&background=222&color=fff&bold=true"
+          className="w-6 h-6 rounded-full"
+        />
+      ),
+    },
+    {
+      name: "VESPR",
+      icon: (
+        <img
+          src="https://ui-avatars.com/api/?name=V&background=333&color=fff&bold=true"
+          className="w-6 h-6 rounded-full"
+        />
+      ),
+    },
+    {
+      name: "Bybit",
+      icon: (
+        <img
+          src="https://ui-avatars.com/api/?name=BY&background=444&color=fff&bold=true"
+          className="w-6 h-6 rounded-full"
+        />
+      ),
+    },
+  ];
+
+  // Replace handleConnectWalletClick with:
+  const handleConnectWalletClick = () => {
+    setIsAddWalletModalOpen(true);
+  };
+
+  // Called when clicking "Add" inside AddWalletModal
+  const handleWalletAddClick = (walletName: string) => {
+    setSelectedExchange(walletName); // Could use to customize modal message
+    setIsAddWalletModalOpen(false);
+    setTimeout(() => setIsModalOpen(true), 300); // slight delay for smooth transition
+  };
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -132,10 +197,10 @@ export const WalletList: React.FC<WalletListProps> = ({
     scrollRef.current?.scrollBy({ left: 150, behavior: "smooth" });
   };
 
-  const handleConnectWalletClick = () => {
-    setIsModalOpen(true);
-    setApiError(null);
-  };
+  // const handleConnectWalletClick = () => {
+  //   setIsModalOpen(true);
+  //   setApiError(null);
+  // };
 
   const handleModalSubmit = (apiKey: string, secretKey: string) => {
     if (apiKey === "correct_api_key" && secretKey === "correct_secret_key") {
@@ -239,6 +304,13 @@ export const WalletList: React.FC<WalletListProps> = ({
           Connect Wallet
         </Button>
       )}
+
+      <AddWalletModal
+        isOpen={isAddWalletModalOpen}
+        onClose={() => setIsAddWalletModalOpen(false)}
+        wallets={exchanges}
+        onWalletAddClick={handleWalletAddClick}
+      />
 
       <ApiCredentialsModal
         isOpen={isModalOpen}

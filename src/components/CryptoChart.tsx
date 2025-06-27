@@ -33,23 +33,17 @@ const CryptoChart: React.FC = () => {
 
   return (
     <div
-      className="tradingview-widget-container"
+      className="tradingview-widget-container min-h-[300px] md:min-h-[500px]"
       ref={containerRef}
       style={{
         width: "100%",
-        height: "100%",
         overflow: "hidden",
         backgroundColor: "transparent",
       }}
     >
       <div
-        className="tradingview-widget-container__widget"
-        style={{
-          width: "100%",
-          height: "100%",
-          minHeight: "500px",
-          backgroundColor: "transparent",
-        }}
+        className="tradingview-widget-container__widget min-h-[300px] md:min-h-[500px]"
+        style={{ width: "100%", backgroundColor: "transparent" }}
       />
       <div
         className="tradingview-widget-copyright"
