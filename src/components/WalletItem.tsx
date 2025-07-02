@@ -233,7 +233,7 @@ export const WalletList: React.FC<WalletListProps> = ({
 
       {/* Mobile horizontal scroll wallet list */}
       {isMobileView && (
-        <div className="relative w-full mt-4">
+        <div className="relative w-full mt-4 pb-4 mb-4">
           {canScrollLeft && (
             <button
               onClick={scrollLeft}
@@ -246,7 +246,7 @@ export const WalletList: React.FC<WalletListProps> = ({
 
           <div
             ref={scrollRef}
-            className="flex space-x-2 overflow-x-auto px-10 scroll-smooth custom-scrollbar-hidden"
+            className="flex space-x-2 overflow-x-auto px-10 scroll-smooth custom-scrollbar-hidden "
             style={{
               scrollSnapType: "x mandatory",
               WebkitOverflowScrolling: "touch",
