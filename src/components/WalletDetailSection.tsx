@@ -195,7 +195,7 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
         </div>
 
         {/* Main Tabs */}
-        <div className="flex gap-2 border-b p-1 border-[#fff] mb-3 whitespace-nowrap overflow-x-hidden min-h-[60px]">
+        <div className="flex gap-1 border-b p-1 border-[#fff] mb-3 whitespace-nowrap overflow-auto w-full min-w-full  min-h-[60px] text-sm">
           {["Spot", "Futures", "Fund Transfer", "Trade"].map((tab) => (
             <Button
               key={tab}
@@ -207,7 +207,7 @@ export const WalletDetailSection: React.FC<WalletDetailSectionProps> = ({
               }}
               className={`pb-2 rounded-[8px] whitespace-nowrap
         text-sm sm:text-xs md:text-sm
-        px-2 sm:px-2 md:px-3
+        px-2 sm:px-1 md:px-2
         border border-white 
         ${
           activeMainTab === tab
