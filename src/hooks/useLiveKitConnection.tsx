@@ -35,6 +35,11 @@ export const LiveKitConnectionProvider = ({
     try {
       const data = await generateLiveKitToken(metadata);
       const newRoom = new Room();
+
+      await newRoom.connect(data.livekitUrl, data.accessToken, {
+        autoSubscribe: true,
+      });
+      await newRoom.localParticipant.setMicrophoneEnabled(true);
       setRoom(newRoom);
       setConnection({
         wsUrl: data.livekitUrl,
@@ -42,6 +47,8 @@ export const LiveKitConnectionProvider = ({
         roomName: data.roomName,
         shouldConnect: true,
       });
+
+      console.log("✅ LiveKit Room connected");
     } catch (error) {
       console.error("Error generating LiveKit token:", error);
       setConnection({ wsUrl: "", token: "", shouldConnect: false });

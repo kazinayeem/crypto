@@ -49,15 +49,19 @@ export default function FullScreenChat() {
       if (!text.trim()) return;
 
       try {
-        // Send text message through LiveKit
-        if (activeRoom?.localParticipant) {
+        if (activeRoom?.state === "connected" && activeRoom.localParticipant) {
           await activeRoom.localParticipant.sendText(text, {
             topic: "lk.chat",
           });
+          console.log("Message sent");
+        } else {
+          console.warn("Room not connected. Cannot send message.");
+          return;
         }
+
         setInput("");
 
-        // For demo purposes, simulate agent response
+        // Simulate agent response
         const simulatedResponse = `Response to: "${text}"`;
         setIsAgentSpeaking(true);
         speechSynthesis.cancel();
@@ -181,6 +185,7 @@ export default function FullScreenChat() {
           <Button
             variant="ghost"
             size="icon"
+         
             onClick={() => handleSendMessageFromInput(input)}
           >
             <Send size={20} />

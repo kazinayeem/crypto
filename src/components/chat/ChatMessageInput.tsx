@@ -30,7 +30,7 @@ export const ChatMessageInput = ({
     }
 
     onSend(message);
-    setMessage(""); // Clear the input field after sending
+    setMessage("");
   }, [onSend, message]);
 
   useEffect(() => {

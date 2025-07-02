@@ -1,7 +1,7 @@
-// AddWalletModal.tsx
 import React from "react";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
+import { motion } from "framer-motion";
 
 interface AddWalletModalProps {
   isOpen: boolean;
@@ -16,21 +16,31 @@ export const AddWalletModal: React.FC<AddWalletModalProps> = ({
   onWalletAddClick,
   wallets,
 }) => {
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-[#1f1f1f] rounded-2xl p-4 w-full max-w-sm text-white border border-gray-700">
         <DialogHeader className="flex items-center space-x-2 mb-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="text-white"
+          <motion.div
+            initial="initial"
+            animate="animate"
+            whileTap="tap"
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
           >
-            {/* You can use an SVG or any icon library here */}
-            <span style={{ fontSize: 24 }}>←</span>
-          </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="text-white"
+              aria-label="Go back"
+            >
+              {/* Left arrow */}
+              <span style={{ fontSize: 24 }}>←</span>
+            </Button>
+          </motion.div>
           <span className="text-lg font-semibold">Add Exchange</span>
         </DialogHeader>
+
         <ul className="space-y-4">
           {wallets.map((wallet, idx) => (
             <li key={idx} className="flex items-center justify-between">

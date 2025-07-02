@@ -77,8 +77,6 @@ export function VoiceControls({
           onSpeechToText(transcribedText, true);
           setIsListening(false);
         }, 2000);
-
-        // Play remote audio locally for testing
         const audio = new Audio();
         audio.srcObject = new MediaStream([track.mediaStreamTrack]);
         audio.autoplay = true;
