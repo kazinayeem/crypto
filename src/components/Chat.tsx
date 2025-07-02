@@ -23,7 +23,7 @@ export default function FullScreenChat() {
   const [isUserSpeakingViaVoice, setIsUserSpeakingViaVoice] = useState(false);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    //messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   const toggleVoiceChat = async () => {
